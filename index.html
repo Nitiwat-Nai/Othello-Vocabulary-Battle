@@ -3,8 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ Word Reversi Battle - Enhanced v2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>✨ Word Reversi Battle - Mobile Optimized</title>
 
     <style>
         /* === 1. RESET & GLOBAL STYLES === */
@@ -15,59 +17,37 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        html,
         body {
-            margin: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+        }
+
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 10px;
-            overflow-x: hidden;
-        }
-
-        /* Animated background pattern */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: backgroundMove 20s linear infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        @keyframes backgroundMove {
-            0% {
-                transform: translate(0, 0);
-            }
-
-            100% {
-                transform: translate(50px, 50px);
-            }
         }
 
         #app-container {
             width: 100%;
-            max-width: 500px;
+            height: 100%;
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 25px;
-            position: relative;
-            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 10px;
         }
 
         /* === 2. HEADER STYLES === */
         header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+            flex-shrink: 0;
         }
 
         h1 {
@@ -77,10 +57,9 @@
             background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: gradientShift 3s ease infinite;
-            font-size: clamp(1.5em, 5vw, 2em);
+            font-size: clamp(1.3em, 5vw, 1.8em);
             font-weight: 900;
             margin: 0;
-            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         @keyframes gradientShift {
@@ -103,8 +82,10 @@
         #main-menu {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            padding: 20px 0;
+            gap: 15px;
+            padding: 10px;
+            flex: 1;
+            justify-content: center;
         }
 
         #main-menu h2 {
@@ -123,88 +104,61 @@
             font-weight: 700;
             color: white;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: all 0.3s;
             box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .menu-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .menu-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.5);
         }
 
         .menu-btn:active {
             transform: scale(0.95);
-            box-shadow: 0 3px 10px rgba(79, 172, 254, 0.3);
-        }
-
-        .menu-btn:active::before {
-            width: 300px;
-            height: 300px;
         }
 
         /* === 4. GAME SCREEN STYLES === */
         #game-screen {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
+            flex: 1;
+            overflow: hidden;
         }
 
         #score-board {
-            font-size: clamp(1.1em, 4vw, 1.3em);
+            font-size: clamp(1em, 4vw, 1.2em);
             font-weight: 800;
             color: #333;
             text-align: center;
-            padding: 12px;
+            padding: 8px;
             background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            border-radius: 12px;
+            border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        #score-black {
-            color: #1a1a1a;
-        }
-
-        #score-white {
-            color: #666;
+            flex-shrink: 0;
         }
 
         #status-message {
             font-weight: 700;
             color: #4b0082;
-            font-size: clamp(0.9em, 3vw, 1.1em);
+            font-size: clamp(0.85em, 3vw, 1em);
             text-align: center;
-            padding: 10px;
+            padding: 8px;
             background: rgba(255, 255, 255, 0.7);
-            border-radius: 10px;
-            min-height: 45px;
+            border-radius: 8px;
+            min-height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         /* === 5. GAME BOARD STYLES === */
         #game-board-container {
-            padding: 15px;
+            padding: 8px;
             background: linear-gradient(135deg, #2e8b57 0%, #3cb371 100%);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            aspect-ratio: 1 / 1;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
         #game-board {
@@ -213,9 +167,10 @@
             grid-template-rows: repeat(8, 1fr);
             gap: 2px;
             width: 100%;
-            height: 100%;
+            max-width: min(100%, calc(100vh - 200px));
+            aspect-ratio: 1 / 1;
             background-color: #1a5c3a;
-            border-radius: 12px;
+            border-radius: 10px;
             overflow: hidden;
             box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.2);
         }
@@ -230,10 +185,6 @@
             touch-action: manipulation;
             transition: background 0.2s;
             position: relative;
-        }
-
-        .cell:hover:not(.occupied) {
-            background: linear-gradient(135deg, #4cd080 0%, #3ea968 100%);
         }
 
         .cell.hint {
@@ -297,10 +248,6 @@
             background: radial-gradient(circle at 30% 30%, #ffffff, #e0e0e0);
         }
 
-        .disc:hover {
-            transform: scale(1.05);
-        }
-
         .disc.flipped {
             animation: flip-animation 0.6s forwards;
         }
@@ -351,31 +298,30 @@
 
         #question-box {
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            padding: 30px;
+            padding: 20px;
             margin: 20px;
-            border-radius: 25px;
+            border-radius: 20px;
             max-width: 90%;
             box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
             text-align: center;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: all 0.4s;
             border: 3px solid transparent;
         }
 
         #question-box h2 {
             color: #4b0082;
-            font-size: clamp(1.2em, 4vw, 1.5em);
+            font-size: clamp(1.1em, 4vw, 1.4em);
             margin-bottom: 15px;
         }
 
         #question-text {
-            font-size: clamp(1em, 3.5vw, 1.2em);
+            font-size: clamp(0.95em, 3.5vw, 1.1em);
             color: #333;
             margin-bottom: 20px;
             line-height: 1.6;
             font-weight: 600;
         }
 
-        /* Feedback Colors */
         .quiz-correct {
             background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%) !important;
             border-color: #4caf50 !important;
@@ -403,81 +349,37 @@
             border-radius: 12px;
             font-size: clamp(1em, 3.5vw, 1.1em);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: all 0.3s;
             font-weight: 700;
             color: white;
             flex: 1;
             min-width: 120px;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .option-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .option-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
         }
 
         .option-btn:active {
             transform: scale(0.95);
         }
 
-        .option-btn:active::before {
-            width: 300px;
-            height: 300px;
-        }
-
         .option-btn:disabled {
             opacity: 0.6;
-            cursor: not-allowed;
         }
 
-        /* === 8. RESPONSIVE DESIGN === */
-        @media (max-width: 400px) {
-            #app-container {
-                padding: 15px;
+        /* === 8. LANDSCAPE MODE === */
+        @media (orientation: landscape) {
+            #game-board {
+                max-width: min(100%, calc(100vh - 100px));
             }
 
-            #game-board-container {
-                padding: 10px;
-            }
-
-            .option-btn {
-                padding: 12px 20px;
-                min-width: 100px;
-            }
-        }
-
-        @media (orientation: landscape) and (max-height: 500px) {
-            #app-container {
-                max-width: 90vw;
-            }
-
-            #game-board-container {
-                max-width: 400px;
-                margin: 0 auto;
+            h1 {
+                font-size: clamp(1.2em, 3vw, 1.5em);
             }
         }
     </style>
 </head>
 
 <body>
-
     <div id="app-container">
-
         <header>
             <h1>✨ Word Reversi Battle ✨</h1>
         </header>
@@ -514,14 +416,13 @@
                 </div>
             </div>
         </main>
-
     </div>
 
     <script>
         // === 1. GAME STATE INITIALIZATION ===
         const BOARD_SIZE = 8;
         const board = [];
-        let currentPlayer = 1; // 1 = Black, 2 = White
+        let currentPlayer = 1;
         let lastClickedCell = null;
         let isRobotMode = false;
         let sounds = {};
@@ -532,9 +433,8 @@
             { dr: -1, dc: -1 }, { dr: -1, dc: 1 }, { dr: 1, dc: -1 }, { dr: 1, dc: 1 }
         ];
 
-        // === 2. VOCABULARY DATA (100 Beginner Level Questions) ===
+        // === 2. VOCABULARY DATA (100 Questions) ===
         const vocabularyList = [
-            // Opposites (1-20)
             { question: "Is 'Big' the opposite of 'Small'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
             { question: "Is 'Hot' the opposite of 'Cold'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
             { question: "Is 'Night' the opposite of 'Day'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
@@ -555,8 +455,6 @@
             { question: "Is 'Bright' the opposite of 'Dark'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
             { question: "Is 'Near' the opposite of 'Far'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
             { question: "Is 'Early' the opposite of 'Late'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-
-            // True/False Meanings (21-40)
             { question: "The word 'Happy' means feeling 'Sad'. (True/False)", options: { A: "False ✓", B: "True ✗" }, correct: "A" },
             { question: "The word 'Quick' means doing something 'Fast'. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
             { question: "The word 'Tall' means the same as 'Short'. (True/False)", options: { A: "False ✓", B: "True ✗" }, correct: "A" },
@@ -577,8 +475,6 @@
             { question: "'Laugh' means to show you are happy. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
             { question: "'Cry' means tears come from your eyes. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
             { question: "'Smile' means to show happiness on your face. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-
-            // Synonyms (41-60)
             { question: "Is 'Cold' the synonym of 'Hot'?", options: { A: "No ✓", B: "Yes ✗" }, correct: "A" },
             { question: "Is 'Happy' similar to 'Glad'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
             { question: "Is 'Angry' similar to 'Mad'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
@@ -599,8 +495,6 @@
             { question: "Is 'Mean' similar to 'Cruel'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
             { question: "Is 'Brave' similar to 'Courageous'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
             { question: "Is 'Quiet' similar to 'Silent'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-
-            // Word Meanings (61-80)
             { question: "Which word means 'to begin'?", options: { A: "Start ✓", B: "End ✗" }, correct: "A" },
             { question: "Which word means 'to finish'?", options: { A: "End ✓", B: "Begin ✗" }, correct: "A" },
             { question: "Which word means 'very cold'?", options: { A: "Freezing ✓", B: "Hot ✗" }, correct: "A" },
@@ -621,8 +515,6 @@
             { question: "Which word means 'very ugly'?", options: { A: "Hideous ✓", B: "Pretty ✗" }, correct: "A" },
             { question: "Which word means 'very smart'?", options: { A: "Brilliant ✓", B: "Dumb ✗" }, correct: "A" },
             { question: "Which word means 'very funny'?", options: { A: "Hilarious ✓", B: "Boring ✗" }, correct: "A" },
-
-            // Common Words (81-100)
             { question: "A 'Cat' is an animal. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
             { question: "A 'Dog' is a type of fruit. (True/False)", options: { A: "False ✓", B: "True ✗" }, correct: "A" },
             { question: "An 'Apple' is a fruit. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
@@ -651,7 +543,6 @@
         const gameScreen = document.getElementById('game-screen');
         const boardElement = document.getElementById('game-board');
         const statusMessage = document.getElementById('status-message');
-        const scoreBoard = document.getElementById('score-board');
         const questionOverlay = document.getElementById('question-overlay');
         const questionBox = document.getElementById('question-box');
         const questionText = document.getElementById('question-text');
@@ -659,31 +550,26 @@
 
         // === 4. SOUND LOADING ===
         function loadSounds() {
-            const correctBase64 = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAAAAAA==';
-            const errorBase64 = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAAAAAA==';
-            const flipBase64 = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAAAAAA==';
-
-            sounds.correct = new Audio(correctBase64);
-            sounds.error = new Audio(errorBase64);
-            sounds.flip = new Audio(flipBase64);
+            const base64 = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAAAAAA==';
+            sounds.correct = new Audio(base64);
+            sounds.error = new Audio(base64);
+            sounds.flip = new Audio(base64);
         }
 
-        // === 5. QUIZ MANAGEMENT (NON-REPEATING IN SINGLE GAME) ===
+        // === 5. QUIZ MANAGEMENT ===
         function initializeQuizIndices() {
             availableQuizIndices = Array.from({ length: vocabularyList.length }, (_, i) => i);
         }
 
         function getNextQuestionIndex() {
-            if (availableQuizIndices.length === 0) {
-                initializeQuizIndices();
-            }
-            const randomIndexInPool = Math.floor(Math.random() * availableQuizIndices.length);
-            const questionIndex = availableQuizIndices[randomIndexInPool];
-            availableQuizIndices.splice(randomIndexInPool, 1);
+            if (availableQuizIndices.length === 0) initializeQuizIndices();
+            const randomIndex = Math.floor(Math.random() * availableQuizIndices.length);
+            const questionIndex = availableQuizIndices[randomIndex];
+            availableQuizIndices.splice(randomIndex, 1);
             return questionIndex;
         }
 
-        // === 6. GAME FLOW MANAGEMENT ===
+        // === 6. GAME FLOW ===
         function startGame(robotMode) {
             isRobotMode = robotMode;
             mainMenu.classList.add('hidden');
@@ -699,29 +585,23 @@
             currentPlayer = 1;
         }
 
-        // === 7. OTHELLO LOGIC FUNCTIONS ===
+        // === 7. OTHELLO LOGIC ===
         function getFlips(r, c, player) {
             if (board[r][c] !== 0) return [];
             const opponent = player === 1 ? 2 : 1;
             const flipsToMake = [];
 
             for (const { dr, dc } of DIRECTIONS) {
-                let currentR = r + dr;
-                let currentC = c + dc;
+                let currentR = r + dr, currentC = c + dc;
                 const path = [];
 
-                while (currentR >= 0 && currentR < BOARD_SIZE &&
-                    currentC >= 0 && currentC < BOARD_SIZE &&
-                    board[currentR][currentC] === opponent) {
+                while (currentR >= 0 && currentR < BOARD_SIZE && currentC >= 0 && currentC < BOARD_SIZE && board[currentR][currentC] === opponent) {
                     path.push({ r: currentR, c: currentC });
                     currentR += dr;
                     currentC += dc;
                 }
 
-                if (path.length > 0 &&
-                    currentR >= 0 && currentR < BOARD_SIZE &&
-                    currentC >= 0 && currentC < BOARD_SIZE &&
-                    board[currentR][currentC] === player) {
+                if (path.length > 0 && currentR >= 0 && currentR < BOARD_SIZE && currentC >= 0 && currentC < BOARD_SIZE && board[currentR][currentC] === player) {
                     flipsToMake.push(...path);
                 }
             }
@@ -736,9 +616,7 @@
             const validMoves = [];
             for (let r = 0; r < BOARD_SIZE; r++) {
                 for (let c = 0; c < BOARD_SIZE; c++) {
-                    if (isValidMove(r, c, player)) {
-                        validMoves.push({ r, c });
-                    }
+                    if (isValidMove(r, c, player)) validMoves.push({ r, c });
                 }
             }
             return validMoves;
@@ -761,11 +639,8 @@
                 }
             }
 
-            // Initial setup
-            board[3][3] = 2; // White
-            board[3][4] = 1; // Black
-            board[4][3] = 1; // Black
-            board[4][4] = 2; // White
+            board[3][3] = 2; board[3][4] = 1;
+            board[4][3] = 1; board[4][4] = 2;
 
             currentPlayer = 1;
             updateBoardVisuals();
@@ -774,15 +649,11 @@
 
         // === 9. BOARD VISUAL UPDATE ===
         function updateBoardVisuals() {
-            let blackCount = 0;
-            let whiteCount = 0;
+            let blackCount = 0, whiteCount = 0;
             const cells = boardElement.children;
             const validMoves = getAllValidMoves(currentPlayer);
 
-            // Clear hints
-            for (const cell of cells) {
-                cell.classList.remove('hint');
-            }
+            for (const cell of cells) cell.classList.remove('hint');
 
             for (let r = 0; r < BOARD_SIZE; r++) {
                 for (let c = 0; c < BOARD_SIZE; c++) {
@@ -799,23 +670,15 @@
                         }
                         disc.className = 'disc';
                         disc.classList.add(board[r][c] === 1 ? 'black' : 'white');
-
-                        if (board[r][c] === 1) blackCount++;
-                        else whiteCount++;
-
+                        if (board[r][c] === 1) blackCount++; else whiteCount++;
                     } else {
                         cell.innerHTML = '';
                         cell.classList.remove('occupied');
-
-                        // Show hints
-                        if (validMoves.some(m => m.r === r && m.c === c)) {
-                            cell.classList.add('hint');
-                        }
+                        if (validMoves.some(m => m.r === r && m.c === c)) cell.classList.add('hint');
                     }
                 }
             }
 
-            // Update score
             document.getElementById('score-black').textContent = `⚫ ${blackCount}`;
             document.getElementById('score-white').textContent = `⚪ ${whiteCount}`;
         }
@@ -827,31 +690,21 @@
 
             if (validMoves.length === 0) {
                 const opponentValidMoves = getAllValidMoves(currentPlayer === 1 ? 2 : 1);
-
                 if (opponentValidMoves.length === 0) {
-                    // Game over
                     const blackScore = document.getElementById('score-black').textContent.match(/\d+/)[0];
                     const whiteScore = document.getElementById('score-white').textContent.match(/\d+/)[0];
-                    const winner = blackScore > whiteScore ? '⚫ Black Wins!' :
-                        whiteScore > blackScore ? '⚪ White Wins!' : '🤝 Draw!';
+                    const winner = blackScore > whiteScore ? '⚫ Black Wins!' : whiteScore > blackScore ? '⚪ White Wins!' : '🤝 Draw!';
                     statusMessage.innerHTML = `🏆 GAME OVER! ${winner}<br><button class="menu-btn" style="margin-top:10px;padding:10px 20px;font-size:0.9em;" onclick="returnToMenu()">Back to Menu</button>`;
                     return;
                 } else {
                     statusMessage.textContent = `🚫 ${playerSymbol} cannot move. Passing turn...`;
-                    setTimeout(() => {
-                        currentPlayer = currentPlayer === 1 ? 2 : 1;
-                        updateStatus();
-                    }, 1500);
+                    setTimeout(() => { currentPlayer = currentPlayer === 1 ? 2 : 1; updateStatus(); }, 1500);
                     return;
                 }
             }
 
             statusMessage.textContent = `Turn: ${playerSymbol}`;
-
-            if (isRobotMode && currentPlayer === 2) {
-                setTimeout(handleRobotMove, 1000);
-            }
-
+            if (isRobotMode && currentPlayer === 2) setTimeout(handleRobotMove, 1000);
             updateBoardVisuals();
         }
 
@@ -878,15 +731,11 @@
             const questionIndex = getNextQuestionIndex();
             currentQuestion = vocabularyList[questionIndex];
 
-            // Reset visual state
             questionBox.classList.remove('quiz-correct', 'quiz-error');
-
             questionText.textContent = currentQuestion.question;
             optionsContainer.innerHTML = '';
 
-            const optionKeys = ['A', 'B'];
-
-            optionKeys.forEach(key => {
+            ['A', 'B'].forEach(key => {
                 const button = document.createElement('button');
                 button.classList.add('option-btn');
                 button.dataset.answer = key;
@@ -901,8 +750,6 @@
         // === 13. ANSWER HANDLER ===
         function handleAnswer(event) {
             const userAnswer = event.currentTarget.dataset.answer;
-
-            // Disable all buttons
             document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
 
             const isCorrect = (userAnswer === currentQuestion.correct);
@@ -915,12 +762,10 @@
                 sounds.error.play().catch(() => { });
             }
 
-            // Wait for visual feedback
             setTimeout(() => {
                 questionOverlay.classList.add('hidden');
                 document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = false);
 
-                // Get flips only if correct
                 const flips = isCorrect ? getFlips(lastClickedCell.r, lastClickedCell.c, currentPlayer) : [];
                 processMove(lastClickedCell.r, lastClickedCell.c, flips);
             }, 1000);
@@ -939,15 +784,13 @@
         // === 15. MOVE PROCESSING WITH ANIMATION ===
         async function processMove(r, c, flipsToMake) {
             const opponent = currentPlayer === 1 ? 2 : 1;
-            const FLIP_DELAY = 200; // Slower flip animation (was 150ms)
+            const FLIP_DELAY = 200;
 
-            // Place the disc
             board[r][c] = currentPlayer;
             updateBoardVisuals();
 
             let delayTime = 100;
 
-            // Perform flips with animation
             if (flipsToMake.length > 0) {
                 delayTime = FLIP_DELAY * flipsToMake.length + 100;
 
@@ -969,7 +812,6 @@
                 }
             }
 
-            // Switch turn
             setTimeout(() => {
                 currentPlayer = opponent;
                 updateStatus();
@@ -983,7 +825,6 @@
             loadSounds();
             initializeQuizIndices();
         });
-
     </script>
 </body>
 
