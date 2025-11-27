@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>✨ Word Reversi Battle - Final Fixed</title>
+    <title>✨ Word Reversi Battle - Final Sound Fixed</title>
 
     <style>
         /* === 1. RESET & GLOBAL STYLES === */
@@ -27,7 +27,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* สีพื้นหลัง: ครีม/ชมพูอ่อน ตามต้นฉบับ v5 */
+            /* สีพื้นหลัง: ครีม/ชมพูอ่อน */
             background-color: #f7e6ff;
             display: flex;
             justify-content: center;
@@ -144,7 +144,7 @@
 
         /* === 5. GAME BOARD STYLES === */
         #game-board-container {
-            /* สีเขียวอ่อน/มิ้นต์ ตามต้นฉบับ v5 */
+            /* สีเขียวอ่อน/มิ้นต์ */
             padding: 10px;
             background-color: #c7f0d0;
             border-radius: 15px;
@@ -396,16 +396,60 @@
         let lastClickedCell = null;
         let isRobotMode = false;
         let isQuizMode = true;
-        let sounds = {};
         let availableQuizIndices = [];
-        let isProcessing = false; // FIX: Added to prevent click spamming
+        let isProcessing = false;
+
+        // --- NEW SOUND SYSTEM (Web Audio API) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                // High Ping (Success)
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.3);
+
+            } else if (type === 'error') {
+                // Low Buzz (Error)
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+                oscillator.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.3);
+
+            } else if (type === 'flip') {
+                // Short Click (Flip)
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+                gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.05);
+            }
+        }
 
         const DIRECTIONS = [
             { dr: -1, dc: 0 }, { dr: 1, dc: 0 }, { dr: 0, dc: -1 }, { dr: 0, dc: 1 },
             { dr: -1, dc: -1 }, { dr: -1, dc: 1 }, { dr: 1, dc: -1 }, { dr: 1, dc: 1 }
         ];
 
-        // === 2. VOCABULARY DATA (Simplified for testing, can be expanded) ===
+        // === 2. VOCABULARY DATA ===
         const vocabularyList = [
             { question: "Is 'Big' the opposite of 'Small'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
             { question: "Is 'Hot' the opposite of 'Cold'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
@@ -430,16 +474,7 @@
         const questionText = document.getElementById('question-text');
         const optionsContainer = document.getElementById('options-container');
 
-        // === 4. SOUND LOADING ===
-        function loadSounds() {
-            // Using empty base64 for demo purposes to avoid errors
-            const base64 = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAAAAAA==';
-            sounds.correct = new Audio(base64);
-            sounds.error = new Audio(base64);
-            sounds.flip = new Audio(base64);
-        }
-
-        // === 5. QUIZ MANAGEMENT ===
+        // === 4. QUIZ MANAGEMENT ===
         function initializeQuizIndices() {
             availableQuizIndices = Array.from({ length: vocabularyList.length }, (_, i) => i);
         }
@@ -452,14 +487,20 @@
             return questionIndex;
         }
 
-        // === 6. GAME FLOW ===
+        // === 5. GAME FLOW ===
         function startGame(robotMode, quizMode) {
             isRobotMode = robotMode;
             isQuizMode = quizMode;
             isProcessing = false;
+            
+            // Resume Audio Context on user gesture
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
             mainMenu.classList.add('hidden');
             gameScreen.classList.remove('hidden');
-            loadSounds();
+            
             if (isQuizMode) initializeQuizIndices();
             initializeBoard();
         }
@@ -471,7 +512,7 @@
             isProcessing = false;
         }
 
-        // === 7. OTHELLO LOGIC ===
+        // === 6. OTHELLO LOGIC ===
         function getFlips(r, c, player) {
             if (board[r][c] !== 0) return [];
             const opponent = player === 1 ? 2 : 1;
@@ -506,7 +547,7 @@
             return validMoves;
         }
 
-        // === 8. BOARD INITIALIZATION ===
+        // === 7. BOARD INITIALIZATION ===
         function initializeBoard() {
             board.length = 0;
             boardElement.innerHTML = '';
@@ -529,7 +570,7 @@
             updateStatus();
         }
 
-        // === 9. BOARD VISUAL UPDATE ===
+        // === 8. BOARD VISUAL UPDATE ===
         function updateBoardVisuals() {
             let blackCount = 0, whiteCount = 0;
             const cells = boardElement.children;
@@ -556,7 +597,6 @@
                     } else {
                         cell.innerHTML = '';
                         cell.classList.remove('occupied');
-                        // Show hint only if not processing and not robot's turn
                         if (!isProcessing && !(isRobotMode && currentPlayer === 2) && validMoves.some(m => m.r === r && m.c === c)) {
                              cell.classList.add('hint');
                         }
@@ -568,7 +608,7 @@
             document.getElementById('score-white').textContent = `⚪ ${whiteCount}`;
         }
 
-        // === 10. STATUS UPDATE ===
+        // === 9. STATUS UPDATE ===
         function updateStatus() {
             const playerSymbol = currentPlayer === 1 ? '⚫ Player 1 (Black)' : (isRobotMode ? '⚪ Robot' : '⚪ Player 2 (White)');
             const validMoves = getAllValidMoves(currentPlayer);
@@ -593,9 +633,8 @@
             updateBoardVisuals();
         }
 
-        // === 11. CELL CLICK HANDLER ===
+        // === 10. CELL CLICK HANDLER ===
         function handleCellClick(event) {
-            // FIX: Check isProcessing to prevent spam
             if (isProcessing || !questionOverlay.classList.contains('hidden') || (isRobotMode && currentPlayer === 2)) return;
 
             const cell = event.currentTarget;
@@ -618,7 +657,7 @@
             }
         }
 
-        // === 12. QUIZ DISPLAY ===
+        // === 11. QUIZ DISPLAY ===
         function showQuiz() {
             const questionIndex = getNextQuestionIndex();
             currentQuestion = vocabularyList[questionIndex];
@@ -639,7 +678,7 @@
             questionOverlay.classList.remove('hidden');
         }
 
-        // === 13. ANSWER HANDLER ===
+        // === 12. ANSWER HANDLER ===
         function handleAnswer(event) {
             const userAnswer = event.currentTarget.dataset.answer;
             document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
@@ -648,10 +687,10 @@
 
             if (isCorrect) {
                 questionBox.classList.add('quiz-correct');
-                sounds.correct.play().catch(() => {});
+                playSound('correct');
             } else {
                 questionBox.classList.add('quiz-error');
-                sounds.error.play().catch(() => {});
+                playSound('error');
             }
 
             setTimeout(() => {
@@ -663,7 +702,7 @@
             }, 1000);
         }
 
-        // === 14. ROBOT MOVE HANDLER ===
+        // === 13. ROBOT MOVE HANDLER ===
         function handleRobotMove() {
             const validMoves = getAllValidMoves(currentPlayer);
             if (validMoves.length > 0) {
@@ -673,9 +712,9 @@
             }
         }
 
-        // === 15. MOVE PROCESSING WITH ANIMATION ===
+        // === 14. MOVE PROCESSING WITH ANIMATION ===
         async function processMove(r, c, flipsToMake) {
-            isProcessing = true; // FIX: Lock input start
+            isProcessing = true;
             const opponent = currentPlayer === 1 ? 2 : 1;
             const FLIP_DELAY = 200;
 
@@ -694,7 +733,7 @@
 
                     if (disc) {
                         disc.classList.add('flipped');
-                        sounds.flip.play().catch(() => {});
+                        playSound('flip');
 
                         await new Promise(resolve => setTimeout(() => {
                             board[flipR][flipC] = currentPlayer;
@@ -707,17 +746,12 @@
 
             setTimeout(() => {
                 currentPlayer = opponent;
-                isProcessing = false; // FIX: Unlock input end
+                isProcessing = false;
                 updateStatus();
             }, delayTime);
 
             lastClickedCell = null;
         }
-
-        // === 16. INITIALIZE ON LOAD ===
-        window.addEventListener('DOMContentLoaded', () => {
-            loadSounds();
-        });
     </script>
 </body>
 
