@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>✨ Word Reversi Battle - Mobile Optimized</title>
+    <title>✨ Word Reversi Battle - Final Fixed</title>
 
     <style>
         /* === 1. RESET & GLOBAL STYLES === */
@@ -27,7 +27,8 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f7e6ff; /* FIX: Changed to light cream/pink background */
+            /* สีพื้นหลัง: ครีม/ชมพูอ่อน ตามต้นฉบับ v5 */
+            background-color: #f7e6ff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -63,15 +64,8 @@
         }
 
         @keyframes gradientShift {
-
-            0%,
-            100% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         .hidden {
@@ -150,10 +144,11 @@
 
         /* === 5. GAME BOARD STYLES === */
         #game-board-container {
-            padding: 10px; /* FIX: Adjusted padding */
-            background-color: #c7f0d0; /* FIX: Changed to light green container background */
-            border-radius: 15px; /* FIX: Adjusted border-radius */
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* FIX: Adjusted shadow */
+            /* สีเขียวอ่อน/มิ้นต์ ตามต้นฉบับ v5 */
+            padding: 10px;
+            background-color: #c7f0d0;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
             flex: 1;
             display: flex;
             align-items: center;
@@ -203,17 +198,8 @@
         }
 
         @keyframes hintPulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 0.4;
-            }
-
-            50% {
-                transform: scale(1.3);
-                opacity: 0.7;
-            }
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.3); opacity: 0.7; }
         }
 
         /* === 6. DISC STYLES & ANIMATIONS === */
@@ -253,21 +239,9 @@
         }
 
         @keyframes flip-animation {
-            0% {
-                transform: rotateY(0deg);
-                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
-            }
-
-            50% {
-                transform: rotateY(90deg) scale(1.1);
-                box-shadow: 0 8px 20px rgba(255, 215, 0, 0.8);
-                filter: brightness(1.3);
-            }
-
-            100% {
-                transform: rotateY(180deg);
-                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
-            }
+            0% { transform: rotateY(0deg); box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4); }
+            50% { transform: rotateY(90deg) scale(1.1); box-shadow: 0 8px 20px rgba(255, 215, 0, 0.8); filter: brightness(1.3); }
+            100% { transform: rotateY(180deg); box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4); }
         }
 
         /* === 7. QUESTION OVERLAY STYLES === */
@@ -287,13 +261,8 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         #question-box {
@@ -365,15 +334,9 @@
             opacity: 0.6;
         }
 
-        /* === 8. LANDSCAPE MODE === */
         @media (orientation: landscape) {
-            #game-board {
-                max-width: min(100%, calc(100vh - 100px));
-            }
-
-            h1 {
-                font-size: clamp(1.2em, 3vw, 1.5em);
-            }
+            #game-board { max-width: min(100%, calc(100vh - 100px)); }
+            h1 { font-size: clamp(1.2em, 3vw, 1.5em); }
         }
     </style>
 </head>
@@ -432,16 +395,17 @@
         let currentPlayer = 1;
         let lastClickedCell = null;
         let isRobotMode = false;
-        let isQuizMode = true; // NEW: Controls quiz display
+        let isQuizMode = true;
         let sounds = {};
         let availableQuizIndices = [];
+        let isProcessing = false; // FIX: Added to prevent click spamming
 
         const DIRECTIONS = [
             { dr: -1, dc: 0 }, { dr: 1, dc: 0 }, { dr: 0, dc: -1 }, { dr: 0, dc: 1 },
             { dr: -1, dc: -1 }, { dr: -1, dc: 1 }, { dr: 1, dc: -1 }, { dr: 1, dc: 1 }
         ];
 
-        // === 2. VOCABULARY DATA (100 Questions) ===
+        // === 2. VOCABULARY DATA (Simplified for testing, can be expanded) ===
         const vocabularyList = [
             { question: "Is 'Big' the opposite of 'Small'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
             { question: "Is 'Hot' the opposite of 'Cold'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
@@ -449,100 +413,10 @@
             { question: "Which is the opposite of 'Up'?", options: { A: "Down ✓", B: "Across ✗" }, correct: "A" },
             { question: "Is 'Good' the opposite of 'Bad'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
             { question: "Is 'Fast' the opposite of 'Slow'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Old' the opposite of 'Young'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Rich' the opposite of 'Poor'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Strong' the opposite of 'Weak'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Clean' the opposite of 'Dirty'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Empty' the opposite of 'Full'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Heavy' the opposite of 'Light'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Wide' the opposite of 'Narrow'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Loud' the opposite of 'Quiet'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Wet' the opposite of 'Dry'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Hard' the opposite of 'Soft'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Long' the opposite of 'Short'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Bright' the opposite of 'Dark'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Near' the opposite of 'Far'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Early' the opposite of 'Late'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
             { question: "The word 'Happy' means feeling 'Sad'. (True/False)", options: { A: "False ✓", B: "True ✗" }, correct: "A" },
-            { question: "The word 'Quick' means doing something 'Fast'. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "The word 'Tall' means the same as 'Short'. (True/False)", options: { A: "False ✓", B: "True ✗" }, correct: "A" },
             { question: "Does 'Run' mean to move quickly?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "'Walk' means to move on foot. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Jump' means to leap into the air. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Swim' means to move through water. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Fly' means to move through the air. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Sleep' means to rest with eyes closed. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Eat' means to consume food. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Drink' means to consume liquid. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Read' means to look at and understand text. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Write' means to make letters or words. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Speak' means to talk or say words. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Listen' means to hear something carefully. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Watch' means to look at something. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Think' means to use your mind. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Laugh' means to show you are happy. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Cry' means tears come from your eyes. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Smile' means to show happiness on your face. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
             { question: "Is 'Cold' the synonym of 'Hot'?", options: { A: "No ✓", B: "Yes ✗" }, correct: "A" },
-            { question: "Is 'Happy' similar to 'Glad'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Angry' similar to 'Mad'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Beautiful' similar to 'Pretty'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Smart' similar to 'Clever'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Funny' similar to 'Amusing'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Scared' similar to 'Afraid'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Tired' similar to 'Sleepy'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Hungry' similar to 'Starving'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Thirsty' similar to needing water?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Big' similar to 'Large'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Small' similar to 'Tiny'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Fast' similar to 'Quick'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Slow' similar to 'Sluggish'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Easy' similar to 'Simple'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Hard' similar to 'Difficult'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Nice' similar to 'Kind'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Mean' similar to 'Cruel'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Brave' similar to 'Courageous'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Is 'Quiet' similar to 'Silent'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
-            { question: "Which word means 'to begin'?", options: { A: "Start ✓", B: "End ✗" }, correct: "A" },
-            { question: "Which word means 'to finish'?", options: { A: "End ✓", B: "Begin ✗" }, correct: "A" },
-            { question: "Which word means 'very cold'?", options: { A: "Freezing ✓", B: "Hot ✗" }, correct: "A" },
-            { question: "Which word means 'very hot'?", options: { A: "Boiling ✓", B: "Cold ✗" }, correct: "A" },
-            { question: "Which word means 'not dangerous'?", options: { A: "Safe ✓", B: "Risky ✗" }, correct: "A" },
-            { question: "Which word means 'full of danger'?", options: { A: "Dangerous ✓", B: "Safe ✗" }, correct: "A" },
-            { question: "Which word means 'very clean'?", options: { A: "Spotless ✓", B: "Dirty ✗" }, correct: "A" },
-            { question: "Which word means 'very dirty'?", options: { A: "Filthy ✓", B: "Clean ✗" }, correct: "A" },
-            { question: "Which word means 'very big'?", options: { A: "Huge ✓", B: "Tiny ✗" }, correct: "A" },
-            { question: "Which word means 'very small'?", options: { A: "Tiny ✓", B: "Giant ✗" }, correct: "A" },
-            { question: "Which word means 'very good'?", options: { A: "Excellent ✓", B: "Terrible ✗" }, correct: "A" },
-            { question: "Which word means 'very bad'?", options: { A: "Terrible ✓", B: "Great ✗" }, correct: "A" },
-            { question: "Which word means 'very happy'?", options: { A: "Joyful ✓", B: "Sad ✗" }, correct: "A" },
-            { question: "Which word means 'very sad'?", options: { A: "Miserable ✓", B: "Happy ✗" }, correct: "A" },
-            { question: "Which word means 'very angry'?", options: { A: "Furious ✓", B: "Calm ✗" }, correct: "A" },
-            { question: "Which word means 'very tired'?", options: { A: "Exhausted ✓", B: "Energetic ✗" }, correct: "A" },
-            { question: "Which word means 'very beautiful'?", options: { A: "Gorgeous ✓", B: "Ugly ✗" }, correct: "A" },
-            { question: "Which word means 'very ugly'?", options: { A: "Hideous ✓", B: "Pretty ✗" }, correct: "A" },
-            { question: "Which word means 'very smart'?", options: { A: "Brilliant ✓", B: "Dumb ✗" }, correct: "A" },
-            { question: "Which word means 'very funny'?", options: { A: "Hilarious ✓", B: "Boring ✗" }, correct: "A" },
-            { question: "A 'Cat' is an animal. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "A 'Dog' is a type of fruit. (True/False)", options: { A: "False ✓", B: "True ✗" }, correct: "A" },
-            { question: "An 'Apple' is a fruit. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "A 'Carrot' is a vegetable. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "The 'Sun' gives us light. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "The 'Moon' comes out at night. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Water' is something we drink. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "A 'Book' is for reading. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "A 'Chair' is for sitting. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "A 'Table' is furniture. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "A 'Car' is a vehicle. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "A 'Bicycle' has two wheels. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "A 'House' is a place to live. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "A 'School' is a place to learn. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "A 'Hospital' is for sick people. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Red' is a color. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Blue' is a number. (True/False)", options: { A: "False ✓", B: "True ✗" }, correct: "A" },
-            { question: "'One' is a number. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'Monday' is a day of the week. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
-            { question: "'January' is a month. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "Which word means 'to begin'?", options: { A: "Start ✓", B: "End ✗" }, correct: "A" }
         ];
         let currentQuestion = null;
 
@@ -558,6 +432,7 @@
 
         // === 4. SOUND LOADING ===
         function loadSounds() {
+            // Using empty base64 for demo purposes to avoid errors
             const base64 = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAAAAAA==';
             sounds.correct = new Audio(base64);
             sounds.error = new Audio(base64);
@@ -580,11 +455,12 @@
         // === 6. GAME FLOW ===
         function startGame(robotMode, quizMode) {
             isRobotMode = robotMode;
-            isQuizMode = quizMode; // NEW: Set Quiz Mode
+            isQuizMode = quizMode;
+            isProcessing = false;
             mainMenu.classList.add('hidden');
             gameScreen.classList.remove('hidden');
             loadSounds();
-            if (isQuizMode) initializeQuizIndices(); // Only init quiz indices if needed
+            if (isQuizMode) initializeQuizIndices();
             initializeBoard();
         }
 
@@ -592,6 +468,7 @@
             mainMenu.classList.remove('hidden');
             gameScreen.classList.add('hidden');
             currentPlayer = 1;
+            isProcessing = false;
         }
 
         // === 7. OTHELLO LOGIC ===
@@ -603,13 +480,11 @@
             for (const { dr, dc } of DIRECTIONS) {
                 let currentR = r + dr, currentC = c + dc;
                 const path = [];
-
                 while (currentR >= 0 && currentR < BOARD_SIZE && currentC >= 0 && currentC < BOARD_SIZE && board[currentR][currentC] === opponent) {
                     path.push({ r: currentR, c: currentC });
                     currentR += dr;
                     currentC += dc;
                 }
-
                 if (path.length > 0 && currentR >= 0 && currentR < BOARD_SIZE && currentC >= 0 && currentC < BOARD_SIZE && board[currentR][currentC] === player) {
                     flipsToMake.push(...path);
                 }
@@ -647,10 +522,8 @@
                     boardElement.appendChild(cell);
                 }
             }
-
             board[3][3] = 2; board[3][4] = 1;
             board[4][3] = 1; board[4][4] = 2;
-
             currentPlayer = 1;
             updateBoardVisuals();
             updateStatus();
@@ -683,7 +556,10 @@
                     } else {
                         cell.innerHTML = '';
                         cell.classList.remove('occupied');
-                        if (validMoves.some(m => m.r === r && m.c === c)) cell.classList.add('hint');
+                        // Show hint only if not processing and not robot's turn
+                        if (!isProcessing && !(isRobotMode && currentPlayer === 2) && validMoves.some(m => m.r === r && m.c === c)) {
+                             cell.classList.add('hint');
+                        }
                     }
                 }
             }
@@ -719,8 +595,8 @@
 
         // === 11. CELL CLICK HANDLER ===
         function handleCellClick(event) {
-            // Prevent interaction if quiz is up or it's the robot's turn
-            if (!questionOverlay.classList.contains('hidden') || (isRobotMode && currentPlayer === 2)) return;
+            // FIX: Check isProcessing to prevent spam
+            if (isProcessing || !questionOverlay.classList.contains('hidden') || (isRobotMode && currentPlayer === 2)) return;
 
             const cell = event.currentTarget;
             const r = parseInt(cell.dataset.row);
@@ -728,17 +604,15 @@
 
             if (!isValidMove(r, c, currentPlayer)) {
                 statusMessage.textContent = '❌ Invalid move! Must flip at least one opponent disc.';
-                setTimeout(updateStatus, 2000);
+                setTimeout(updateStatus, 1500);
                 return;
             }
 
             lastClickedCell = { r, c };
 
-            // Logic for Quiz vs Classic Mode
             if (isQuizMode) {
                 showQuiz();
             } else {
-                // Classic Reversi: Auto-confirm move and proceed
                 const flips = getFlips(r, c, currentPlayer);
                 processMove(r, c, flips);
             }
@@ -774,17 +648,16 @@
 
             if (isCorrect) {
                 questionBox.classList.add('quiz-correct');
-                sounds.correct.play().catch(() => { });
+                sounds.correct.play().catch(() => {});
             } else {
                 questionBox.classList.add('quiz-error');
-                sounds.error.play().catch(() => { });
+                sounds.error.play().catch(() => {});
             }
 
             setTimeout(() => {
                 questionOverlay.classList.add('hidden');
                 document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = false);
 
-                // If correct, get real flips. If incorrect, flips is empty (placed disc, no flip)
                 const flips = isCorrect ? getFlips(lastClickedCell.r, lastClickedCell.c, currentPlayer) : [];
                 processMove(lastClickedCell.r, lastClickedCell.c, flips);
             }, 1000);
@@ -795,7 +668,6 @@
             const validMoves = getAllValidMoves(currentPlayer);
             if (validMoves.length > 0) {
                 const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
-                // Robot move is always assumed correct and flips pieces
                 const flips = getFlips(randomMove.r, randomMove.c, currentPlayer);
                 processMove(randomMove.r, randomMove.c, flips);
             }
@@ -803,6 +675,7 @@
 
         // === 15. MOVE PROCESSING WITH ANIMATION ===
         async function processMove(r, c, flipsToMake) {
+            isProcessing = true; // FIX: Lock input start
             const opponent = currentPlayer === 1 ? 2 : 1;
             const FLIP_DELAY = 200;
 
@@ -821,7 +694,7 @@
 
                     if (disc) {
                         disc.classList.add('flipped');
-                        sounds.flip.play().catch(() => { });
+                        sounds.flip.play().catch(() => {});
 
                         await new Promise(resolve => setTimeout(() => {
                             board[flipR][flipC] = currentPlayer;
@@ -834,6 +707,7 @@
 
             setTimeout(() => {
                 currentPlayer = opponent;
+                isProcessing = false; // FIX: Unlock input end
                 updateStatus();
             }, delayTime);
 
@@ -843,7 +717,6 @@
         // === 16. INITIALIZE ON LOAD ===
         window.addEventListener('DOMContentLoaded', () => {
             loadSounds();
-            // initializeQuizIndices(); // No need to initialize here, only when starting quiz mode
         });
     </script>
 </body>
