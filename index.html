@@ -27,6 +27,859 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* FIX: เปลี่ยนพื้นหลังเป็นสีครีม/ชมพูอ่อนตามภาพ */
+            background-color: #f7e6ff; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #app-container {
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        /* === 2. HEADER STYLES === */
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+
+        h1 {
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s ease infinite;
+            font-size: clamp(1.3em, 5vw, 1.8em);
+            font-weight: 900;
+            margin: 0;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* === 3. MAIN MENU STYLES === */
+        #main-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 10px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        #main-menu h2 {
+            color: #4b0082;
+            font-size: clamp(1.2em, 4vw, 1.5em);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .menu-btn {
+            padding: 18px 20px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            border-radius: 15px;
+            font-size: clamp(1em, 3.5vw, 1.2em);
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .menu-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* === 4. GAME SCREEN STYLES === */
+        #game-screen {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        #score-board {
+            font-size: clamp(1em, 4vw, 1.2em);
+            font-weight: 800;
+            color: #333;
+            text-align: center;
+            padding: 8px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        #status-message {
+            font-weight: 700;
+            color: #4b0082;
+            font-size: clamp(0.85em, 3vw, 1em);
+            text-align: center;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* === 5. GAME BOARD STYLES === */
+        #game-board-container {
+            /* FIX: เปลี่ยนเป็นสีเขียวอ่อนตามภาพ */
+            padding: 10px; 
+            background-color: #c7f0d0; 
+            border-radius: 15px; 
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); 
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 2px;
+            width: 100%;
+            max-width: min(100%, calc(100vh - 200px));
+            aspect-ratio: 1 / 1;
+            background-color: #1a5c3a;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .cell {
+            background: linear-gradient(135deg, #3cb371 0%, #2e8b57 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            perspective: 1000px;
+            touch-action: manipulation;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .cell.hint {
+            background: linear-gradient(135deg, #55c485 0%, #45b475 100%);
+            box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .cell.hint::after {
+            content: '';
+            position: absolute;
+            width: 30%;
+            height: 30%;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            animation: hintPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes hintPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.4;
+            }
+
+            50% {
+                transform: scale(1.3);
+                opacity: 0.7;
+            }
+        }
+
+        /* === 6. DISC STYLES & ANIMATIONS === */
+        .disc {
+            width: 85%;
+            height: 85%;
+            border-radius: 50%;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+            display: block;
+            transition: transform 0.3s ease;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+
+        .disc::after {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 30%;
+            height: 30%;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            filter: blur(5px);
+        }
+
+        .disc.black {
+            background: radial-gradient(circle at 30% 30%, #4a4a4a, #1a1a1a);
+        }
+
+        .disc.white {
+            background: radial-gradient(circle at 30% 30%, #ffffff, #e0e0e0);
+        }
+
+        .disc.flipped {
+            animation: flip-animation 0.6s forwards;
+        }
+
+        @keyframes flip-animation {
+            0% {
+                transform: rotateY(0deg);
+                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+            }
+
+            50% {
+                transform: rotateY(90deg) scale(1.1);
+                box-shadow: 0 8px 20px rgba(255, 215, 0, 0.8);
+                filter: brightness(1.3);
+            }
+
+            100% {
+                transform: rotateY(180deg);
+                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        /* === 7. QUESTION OVERLAY STYLES === */
+        #question-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        #question-box {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 20px;
+            margin: 20px;
+            border-radius: 20px;
+            max-width: 90%;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            transition: all 0.4s;
+            border: 3px solid transparent;
+        }
+
+        #question-box h2 {
+            color: #4b0082;
+            font-size: clamp(1.1em, 4vw, 1.4em);
+            margin-bottom: 15px;
+        }
+
+        #question-text {
+            font-size: clamp(0.95em, 3.5vw, 1.1em);
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        .quiz-correct {
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%) !important;
+            border-color: #4caf50 !important;
+            transform: scale(1.05);
+        }
+
+        .quiz-error {
+            background: linear-gradient(135deg, #ffcdd2 0%, #ef9a9a 100%) !important;
+            border-color: #f44336 !important;
+            transform: scale(1.05);
+        }
+
+        #options-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            font-size: clamp(1em, 3.5vw, 1.1em);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 700;
+            color: white;
+            flex: 1;
+            min-width: 120px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .option-btn:active {
+            transform: scale(0.95);
+        }
+
+        .option-btn:disabled {
+            opacity: 0.6;
+        }
+
+        /* === 8. LANDSCAPE MODE === */
+        @media (orientation: landscape) {
+            #game-board {
+                max-width: min(100%, calc(100vh - 100px));
+            }
+
+            h1 {
+                font-size: clamp(1.2em, 3vw, 1.5em);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app-container">
+        <header>
+            <h1>✨ Word Reversi Battle ✨</h1>
+        </header>
+
+        <main id="main-menu">
+            <h2>🎮 Select Game Mode</h2>
+
+            <button class="menu-btn" onclick="startGame(true, true)">
+                🧠 Word Reversi vs Robot (Quiz)
+            </button>
+            <button class="menu-btn" onclick="startGame(false, true)">
+                🧑‍🤝‍🧑 Word Reversi 2-Player (Quiz)
+            </button>
+            
+            <hr style="margin: 10px 0; border: none; border-top: 1px solid #ddd;">
+
+            <button class="menu-btn" onclick="startGame(true, false)">
+                🤖 Classic Reversi vs Robot (No Quiz)
+            </button>
+            <button class="menu-btn" onclick="startGame(false, false)">
+                🧑‍🤝‍🧑 Classic Reversi 2-Player (No Quiz)
+            </button>
+        </main>
+
+        <main id="game-screen" class="hidden">
+            <div id="score-board">
+                <span id="score-black">⚫ 2</span> |
+                <span id="score-white">⚪ 2</span>
+            </div>
+            <div id="status-message">Loading...</div>
+
+            <div id="game-board-container">
+                <div id="game-board"></div>
+            </div>
+
+            <div id="question-overlay" class="hidden">
+                <div id="question-box">
+                    <h2>❓ Vocabulary Challenge ❓</h2>
+                    <p id="question-text"></p>
+                    <div id="options-container"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // === 1. GAME STATE INITIALIZATION ===
+        const BOARD_SIZE = 8;
+        const board = [];
+        let currentPlayer = 1;
+        let lastClickedCell = null;
+        let isRobotMode = false;
+        let isQuizMode = true; // NEW: Controls quiz display
+        let sounds = {};
+        let availableQuizIndices = [];
+
+        const DIRECTIONS = [
+            { dr: -1, dc: 0 }, { dr: 1, dc: 0 }, { dr: 0, dc: -1 }, { dr: 0, dc: 1 },
+            { dr: -1, dc: -1 }, { dr: -1, dc: 1 }, { dr: 1, dc: -1 }, { dr: 1, dc: 1 }
+        ];
+
+        // === 2. VOCABULARY DATA (100 Questions) ===
+        const vocabularyList = [
+            { question: "Is 'Big' the opposite of 'Small'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Hot' the opposite of 'Cold'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Night' the opposite of 'Day'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Which is the opposite of 'Up'?", options: { A: "Down ✓", B: "Across ✗" }, correct: "A" },
+            { question: "Is 'Good' the opposite of 'Bad'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Fast' the opposite of 'Slow'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Old' the opposite of 'Young'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Rich' the opposite of 'Poor'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Strong' the opposite of 'Weak'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Clean' the opposite of 'Dirty'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Empty' the opposite of 'Full'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Heavy' the opposite of 'Light'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Wide' the opposite of 'Narrow'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Loud' the opposite of 'Quiet'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Wet' the opposite of 'Dry'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Hard' the opposite of 'Soft'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Long' the opposite of 'Short'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Bright' the opposite of 'Dark'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Near' the opposite of 'Far'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Early' the opposite of 'Late'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "The word 'Happy' means feeling 'Sad'. (True/False)", options: { A: "False ✓", B: "True ✗" }, correct: "A" },
+            { question: "The word 'Quick' means doing something 'Fast'. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "The word 'Tall' means the same as 'Short'. (True/False)", options: { A: "False ✓", B: "True ✗" }, correct: "A" },
+            { question: "Does 'Run' mean to move quickly?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "'Walk' means to move on foot. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Jump' means to leap into the air. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Swim' means to move through water. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Fly' means to move through the air. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Sleep' means to rest with eyes closed. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Eat' means to consume food. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Drink' means to consume liquid. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Read' means to look at and understand text. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Write' means to make letters or words. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Speak' means to talk or say words. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Listen' means to hear something carefully. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Watch' means to look at something. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Think' means to use your mind. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Laugh' means to show you are happy. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Cry' means tears come from your eyes. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Smile' means to show happiness on your face. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "Is 'Cold' the synonym of 'Hot'?", options: { A: "No ✓", B: "Yes ✗" }, correct: "A" },
+            { question: "Is 'Happy' similar to 'Glad'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Angry' similar to 'Mad'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Beautiful' similar to 'Pretty'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Smart' similar to 'Clever'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Funny' similar to 'Amusing'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Scared' similar to 'Afraid'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Tired' similar to 'Sleepy'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Hungry' similar to 'Starving'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Thirsty' similar to needing water?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Big' similar to 'Large'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Small' similar to 'Tiny'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Fast' similar to 'Quick'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Slow' similar to 'Sluggish'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Easy' similar to 'Simple'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Hard' similar to 'Difficult'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Nice' similar to 'Kind'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Mean' similar to 'Cruel'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Brave' similar to 'Courageous'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Is 'Quiet' similar to 'Silent'?", options: { A: "Yes ✓", B: "No ✗" }, correct: "A" },
+            { question: "Which word means 'to begin'?", options: { A: "Start ✓", B: "End ✗" }, correct: "A" },
+            { question: "Which word means 'to finish'?", options: { A: "End ✓", B: "Begin ✗" }, correct: "A" },
+            { question: "Which word means 'very cold'?", options: { A: "Freezing ✓", B: "Hot ✗" }, correct: "A" },
+            { question: "Which word means 'very hot'?", options: { A: "Boiling ✓", B: "Cold ✗" }, correct: "A" },
+            { question: "Which word means 'not dangerous'?", options: { A: "Safe ✓", B: "Risky ✗" }, correct: "A" },
+            { question: "Which word means 'full of danger'?", options: { A: "Dangerous ✓", B: "Safe ✗" }, correct: "A" },
+            { question: "Which word means 'very clean'?", options: { A: "Spotless ✓", B: "Dirty ✗" }, correct: "A" },
+            { question: "Which word means 'very dirty'?", options: { A: "Filthy ✓", B: "Clean ✗" }, correct: "A" },
+            { question: "Which word means 'very big'?", options: { A: "Huge ✓", B: "Tiny ✗" }, correct: "A" },
+            { question: "Which word means 'very small'?", options: { A: "Tiny ✓", B: "Giant ✗" }, correct: "A" },
+            { question: "Which word means 'very good'?", options: { A: "Excellent ✓", B: "Terrible ✗" }, correct: "A" },
+            { question: "Which word means 'very bad'?", options: { A: "Terrible ✓", B: "Great ✗" }, correct: "A" },
+            { question: "Which word means 'very happy'?", options: { A: "Joyful ✓", B: "Sad ✗" }, correct: "A" },
+            { question: "Which word means 'very sad'?", options: { A: "Miserable ✓", B: "Happy ✗" }, correct: "A" },
+            { question: "Which word means 'very angry'?", options: { A: "Furious ✓", B: "Calm ✗" }, correct: "A" },
+            { question: "Which word means 'very tired'?", options: { A: "Exhausted ✓", B: "Energetic ✗" }, correct: "A" },
+            { question: "Which word means 'very beautiful'?", options: { A: "Gorgeous ✓", B: "Ugly ✗" }, correct: "A" },
+            { question: "Which word means 'very ugly'?", options: { A: "Hideous ✓", B: "Pretty ✗" }, correct: "A" },
+            { question: "Which word means 'very smart'?", options: { A: "Brilliant ✓", B: "Dumb ✗" }, correct: "A" },
+            { question: "Which word means 'very funny'?", options: { A: "Hilarious ✓", B: "Boring ✗" }, correct: "A" },
+            { question: "A 'Cat' is an animal. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "A 'Dog' is a type of fruit. (True/False)", options: { A: "False ✓", B: "True ✗" }, correct: "A" },
+            { question: "An 'Apple' is a fruit. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "A 'Carrot' is a vegetable. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "The 'Sun' gives us light. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "The 'Moon' comes out at night. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Water' is something we drink. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "A 'Book' is for reading. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "A 'Chair' is for sitting. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "A 'Table' is furniture. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "A 'Car' is a vehicle. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "A 'Bicycle' has two wheels. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "A 'House' is a place to live. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "A 'School' is a place to learn. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "A 'Hospital' is for sick people. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Red' is a color. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Blue' is a number. (True/False)", options: { A: "False ✓", B: "True ✗" }, correct: "A" },
+            { question: "'One' is a number. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'Monday' is a day of the week. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+            { question: "'January' is a month. (True/False)", options: { A: "True ✓", B: "False ✗" }, correct: "A" },
+        ];
+        let currentQuestion = null;
+
+        // === 3. DOM ELEMENTS ===
+        const mainMenu = document.getElementById('main-menu');
+        const gameScreen = document.getElementById('game-screen');
+        const boardElement = document.getElementById('game-board');
+        const statusMessage = document.getElementById('status-message');
+        const questionOverlay = document.getElementById('question-overlay');
+        const questionBox = document.getElementById('question-box');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+
+        // === 4. SOUND LOADING ===
+        function loadSounds() {
+            const base64 = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAAAAAA==';
+            sounds.correct = new Audio(base64);
+            sounds.error = new Audio(base64);
+            sounds.flip = new Audio(base64);
+        }
+
+        // === 5. QUIZ MANAGEMENT ===
+        function initializeQuizIndices() {
+            availableQuizIndices = Array.from({ length: vocabularyList.length }, (_, i) => i);
+        }
+
+        function getNextQuestionIndex() {
+            if (availableQuizIndices.length === 0) initializeQuizIndices();
+            const randomIndex = Math.floor(Math.random() * availableQuizIndices.length);
+            const questionIndex = availableQuizIndices[randomIndex];
+            availableQuizIndices.splice(randomIndex, 1);
+            return questionIndex;
+        }
+
+        // === 6. GAME FLOW ===
+        function startGame(robotMode, quizMode) {
+            isRobotMode = robotMode;
+            isQuizMode = quizMode; // New parameter controls quiz display
+            mainMenu.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            loadSounds();
+            if (isQuizMode) initializeQuizIndices(); // Only init quiz indices if needed
+            initializeBoard();
+        }
+
+        function returnToMenu() {
+            mainMenu.classList.remove('hidden');
+            gameScreen.classList.add('hidden');
+            currentPlayer = 1;
+        }
+
+        // === 7. OTHELLO LOGIC ===
+        function getFlips(r, c, player) {
+            if (board[r][c] !== 0) return [];
+            const opponent = player === 1 ? 2 : 1;
+            const flipsToMake = [];
+
+            for (const { dr, dc } of DIRECTIONS) {
+                let currentR = r + dr, currentC = c + dc;
+                const path = [];
+
+                while (currentR >= 0 && currentR < BOARD_SIZE && currentC >= 0 && currentC < BOARD_SIZE && board[currentR][currentC] === opponent) {
+                    path.push({ r: currentR, c: currentC });
+                    currentR += dr;
+                    currentC += dc;
+                }
+
+                if (path.length > 0 && currentR >= 0 && currentR < BOARD_SIZE && currentC >= 0 && currentC < BOARD_SIZE && board[currentR][currentC] === player) {
+                    flipsToMake.push(...path);
+                }
+            }
+            return flipsToMake;
+        }
+
+        function isValidMove(r, c, player) {
+            return getFlips(r, c, player).length > 0;
+        }
+
+        function getAllValidMoves(player) {
+            const validMoves = [];
+            for (let r = 0; r < BOARD_SIZE; r++) {
+                for (let c = 0; c < BOARD_SIZE; c++) {
+                    if (isValidMove(r, c, player)) validMoves.push({ r, c });
+                }
+            }
+            return validMoves;
+        }
+
+        // === 8. BOARD INITIALIZATION ===
+        function initializeBoard() {
+            board.length = 0;
+            boardElement.innerHTML = '';
+
+            for (let i = 0; i < BOARD_SIZE; i++) {
+                board[i] = new Array(BOARD_SIZE).fill(0);
+                for (let j = 0; j < BOARD_SIZE; j++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.dataset.row = i;
+                    cell.dataset.col = j;
+                    cell.addEventListener('click', handleCellClick);
+                    boardElement.appendChild(cell);
+                }
+            }
+
+            board[3][3] = 2; board[3][4] = 1;
+            board[4][3] = 1; board[4][4] = 2;
+
+            currentPlayer = 1;
+            updateBoardVisuals();
+            updateStatus();
+        }
+
+        // === 9. BOARD VISUAL UPDATE ===
+        function updateBoardVisuals() {
+            let blackCount = 0, whiteCount = 0;
+            const cells = boardElement.children;
+            const validMoves = getAllValidMoves(currentPlayer);
+
+            for (const cell of cells) cell.classList.remove('hint');
+
+            for (let r = 0; r < BOARD_SIZE; r++) {
+                for (let c = 0; c < BOARD_SIZE; c++) {
+                    const index = r * BOARD_SIZE + c;
+                    const cell = cells[index];
+
+                    if (board[r][c] !== 0) {
+                        cell.classList.add('occupied');
+                        let disc = cell.querySelector('.disc');
+                        if (!disc) {
+                            disc = document.createElement('div');
+                            disc.classList.add('disc');
+                            cell.appendChild(disc);
+                        }
+                        disc.className = 'disc';
+                        disc.classList.add(board[r][c] === 1 ? 'black' : 'white');
+                        if (board[r][c] === 1) blackCount++; else whiteCount++;
+                    } else {
+                        cell.innerHTML = '';
+                        cell.classList.remove('occupied');
+                        if (validMoves.some(m => m.r === r && m.c === c)) cell.classList.add('hint');
+                    }
+                }
+            }
+
+            document.getElementById('score-black').textContent = `⚫ ${blackCount}`;
+            document.getElementById('score-white').textContent = `⚪ ${whiteCount}`;
+        }
+
+        // === 10. STATUS UPDATE ===
+        function updateStatus() {
+            const playerSymbol = currentPlayer === 1 ? '⚫ Player 1 (Black)' : (isRobotMode ? '⚪ Robot' : '⚪ Player 2 (White)');
+            const validMoves = getAllValidMoves(currentPlayer);
+
+            if (validMoves.length === 0) {
+                const opponentValidMoves = getAllValidMoves(currentPlayer === 1 ? 2 : 1);
+                if (opponentValidMoves.length === 0) {
+                    const blackScore = document.getElementById('score-black').textContent.match(/\d+/)[0];
+                    const whiteScore = document.getElementById('score-white').textContent.match(/\d+/)[0];
+                    const winner = blackScore > whiteScore ? '⚫ Black Wins!' : whiteScore > blackScore ? '⚪ White Wins!' : '🤝 Draw!';
+                    statusMessage.innerHTML = `🏆 GAME OVER! ${winner}<br><button class="menu-btn" style="margin-top:10px;padding:10px 20px;font-size:0.9em;" onclick="returnToMenu()">Back to Menu</button>`;
+                    return;
+                } else {
+                    statusMessage.textContent = `🚫 ${playerSymbol} cannot move. Passing turn...`;
+                    setTimeout(() => { currentPlayer = currentPlayer === 1 ? 2 : 1; updateStatus(); }, 1500);
+                    return;
+                }
+            }
+
+            statusMessage.textContent = `Turn: ${playerSymbol}`;
+            if (isRobotMode && currentPlayer === 2) setTimeout(handleRobotMove, 1000);
+            updateBoardVisuals();
+        }
+
+        // === 11. CELL CLICK HANDLER ===
+        function handleCellClick(event) {
+            // Prevent interaction if quiz is up or it's the robot's turn
+            if (!questionOverlay.classList.contains('hidden') || (isRobotMode && currentPlayer === 2)) return;
+
+            const cell = event.currentTarget;
+            const r = parseInt(cell.dataset.row);
+            const c = parseInt(cell.dataset.col);
+
+            if (!isValidMove(r, c, currentPlayer)) {
+                statusMessage.textContent = '❌ Invalid move! Must flip at least one opponent disc.';
+                setTimeout(updateStatus, 2000);
+                return;
+            }
+
+            lastClickedCell = { r, c };
+
+            // Logic for Quiz vs Classic Mode
+            if (isQuizMode) {
+                showQuiz();
+            } else {
+                // Classic Reversi: Auto-confirm the move and proceed to flip
+                const flips = getFlips(r, c, currentPlayer);
+                processMove(r, c, flips);
+            }
+        }
+
+        // === 12. QUIZ DISPLAY ===
+        function showQuiz() {
+            const questionIndex = getNextQuestionIndex();
+            currentQuestion = vocabularyList[questionIndex];
+
+            questionBox.classList.remove('quiz-correct', 'quiz-error');
+            questionText.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = '';
+
+            ['A', 'B'].forEach(key => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn');
+                button.dataset.answer = key;
+                button.textContent = currentQuestion.options[key];
+                button.addEventListener('click', handleAnswer);
+                optionsContainer.appendChild(button);
+            });
+
+            questionOverlay.classList.remove('hidden');
+        }
+
+        // === 13. ANSWER HANDLER ===
+        function handleAnswer(event) {
+            // Only runs if isQuizMode is true
+            const userAnswer = event.currentTarget.dataset.answer;
+            document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+
+            const isCorrect = (userAnswer === currentQuestion.correct);
+
+            if (isCorrect) {
+                questionBox.classList.add('quiz-correct');
+                sounds.correct.play().catch(() => { });
+            } else {
+                questionBox.classList.add('quiz-error');
+                sounds.error.play().catch(() => { });
+            }
+
+            setTimeout(() => {
+                questionOverlay.classList.add('hidden');
+                document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = false);
+
+                // If correct, get real flips. If incorrect, flips is empty (placed disc, no flip)
+                const flips = isCorrect ? getFlips(lastClickedCell.r, lastClickedCell.c, currentPlayer) : [];
+                processMove(lastClickedCell.r, lastClickedCell.c, flips);
+            }, 1000);
+        }
+
+        // === 14. ROBOT MOVE HANDLER ===
+        function handleRobotMove() {
+            const validMoves = getAllValidMoves(currentPlayer);
+            if (validMoves.length > 0) {
+                const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+                // In all Robot modes, the move is auto-confirmed and flips pieces
+                const flips = getFlips(randomMove.r, randomMove.c, currentPlayer);
+                processMove(randomMove.r, randomMove.c, flips);
+            }
+        }
+
+        // === 15. MOVE PROCESSING WITH ANIMATION ===
+        async function processMove(r, c, flipsToMake) {
+            const opponent = currentPlayer === 1 ? 2 : 1;
+            const FLIP_DELAY = 200;
+
+            board[r][c] = currentPlayer;
+            updateBoardVisuals();
+
+            let delayTime = 100;
+
+            if (flipsToMake.length > 0) {
+                delayTime = FLIP_DELAY * flipsToMake.length + 100;
+
+                for (const { r: flipR, c: flipC } of flipsToMake) {
+                    const index = flipR * BOARD_SIZE + flipC;
+                    const cell = boardElement.children[index];
+                    const disc = cell.querySelector('.disc');
+
+                    if (disc) {
+                        disc.classList.add('flipped');
+                        sounds.flip.play().catch(() => { });
+
+                        await new Promise(resolve => setTimeout(() => {
+                            board[flipR][flipC] = currentPlayer;
+                            updateBoardVisuals();
+                            resolve();
+                        }, FLIP_DELAY));
+                    }
+                }
+            }
+
+            setTimeout(() => {
+                currentPlayer = opponent;
+                updateStatus();
+            }, delayTime);
+
+            lastClickedCell = null;
+        }
+
+        // === 16. INITIALIZE ON LOAD ===
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSounds();
+            // initializeQuizIndices(); // No need to initialize here, only when starting quiz mode
+        });
+    </script>
+</body>
+
+</html><!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>✨ Word Reversi Battle - Mobile Optimized</title>
+
+    <style>
+        /* === 1. RESET & GLOBAL STYLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             justify-content: center;
@@ -829,3 +1682,4 @@
 </body>
 
 </html>
+
