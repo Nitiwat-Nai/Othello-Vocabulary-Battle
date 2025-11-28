@@ -5,13 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>✨ Word Reversi - Perfect Fix</title>
+    <title>Word Reversi - Nature Theme</title>
 
     <style>
-        /* === 1. RESET & GLOBAL STYLES === */
+        /* === 1. RESET & GLOBAL STYLES (THEME UPDATE) === */
         :root {
-            --bg-color: #f7e6ff;
-            --board-bg: #c7f0d0;
+            /* ธีมสีใหม่: เขียว ขาว น้ำตาล ดำ */
+            --bg-color: #f4f7f0;       /* พื้นหลังขาวอมเขียวอ่อนๆ */
+            --header-bg: #2e7d32;      /* เขียวธรรมชาติ */
+            --board-container: #e8f5e9;/* พื้นหลังรองกระดานสีเขียวจางๆ */
+            --wood-border: #5d4037;    /* สีน้ำตาลเข้ม (ขอบไม้) */
+            --btn-brown: #795548;      /* ปุ่มสีน้ำตาล */
+            --btn-green: #43a047;      /* ปุ่มสีเขียว */
+            --text-color: #1b1b1b;     /* สีดำ */
         }
 
         * {
@@ -30,68 +36,113 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Sarabun', 'Segoe UI', Tahoma, sans-serif;
             background-color: var(--bg-color);
             display: flex;
             justify-content: center;
             align-items: center;
+            color: var(--text-color);
         }
 
         #app-container {
             width: 100%;
             height: 100%;
-            /* ใช้ Flexbox จัดเรียงแนวตั้ง */
             display: flex;
             flex-direction: column;
-            background: rgba(255, 255, 255, 0.5);
-            padding: 10px;
-            /* เว้นระยะปลอดภัยสำหรับจอที่มีติ่ง/ขอบมน */
-            padding-top: max(10px, env(safe-area-inset-top));
+            background: var(--bg-color);
             padding-bottom: max(10px, env(safe-area-inset-bottom));
         }
 
-        /* === 2. HEADER === */
+        /* === 2. HEADER & BACK BUTTON === */
         header {
-            text-align: center;
             flex-shrink: 0;
-            margin-bottom: 5px;
+            width: 100%;
+            height: 60px;
+            background: var(--header-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative; /* เพื่อวางปุ่มกลับหน้าหลักแบบ Absolute */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 20;
         }
 
         h1 {
-            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: clamp(1.5em, 5vw, 2em);
-            font-weight: 900;
+            color: #fff;
+            font-size: 1.5em;
+            font-weight: 800;
             margin: 0;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        /* ปุ่มกลับหน้าหลัก (แยกออกมาวางขวาบน) */
+        #back-home-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            
+            background-color: #fff;
+            color: var(--header-bg);
+            border: 2px solid #fff;
+            border-radius: 20px;
+            
+            padding: 6px 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+        
+        #back-home-btn:active {
+            transform: translateY(-50%) scale(0.95);
+            background-color: #f1f1f1;
         }
 
         .hidden { display: none !important; }
 
-        /* === 3. MENU === */
+        /* === 3. MENU (MOVED TO TOP) === */
         #main-menu {
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start; /* ดันเนื้อหาขึ้นบน */
+            align-items: center;
             gap: 15px;
             width: 100%;
             max-width: 400px;
             margin: 0 auto;
+            padding: 30px 20px; /* เพิ่ม padding ด้านบน */
         }
 
         .menu-btn {
-            padding: 18px;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            width: 100%;
+            padding: 15px;
+            /* เปลี่ยนปุ่มเป็นโทนเขียว-น้ำตาล */
+            background: linear-gradient(135deg, var(--btn-green) 0%, #2e7d32 100%);
             border: none;
             border-radius: 12px;
             color: white;
             font-size: 1.1em;
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
         }
-        .menu-btn:active { transform: scale(0.96); }
+        .menu-btn:active { transform: scale(0.98); }
+        
+        /* เส้นคั่น */
+        hr {
+            border: 0;
+            border-top: 2px dashed #ccc;
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        /* ปุ่มโหมด Classic เป็นสีน้ำตาลเพื่อแยกความแตกต่าง */
+        .btn-classic {
+            background: linear-gradient(135deg, #8d6e63 0%, var(--wood-border) 100%);
+        }
 
         /* === 4. GAME SCREEN LAYOUT === */
         #game-screen {
@@ -101,102 +152,104 @@
             gap: 10px;
             overflow: hidden;
             width: 100%;
-            align-items: center; /* จัดกลางแนวนอน */
+            align-items: center;
+            padding: 10px;
         }
 
         #score-board {
             display: flex;
             justify-content: space-around;
             width: 100%;
-            max-width: 500px;
+            max-width: 400px;
             padding: 10px;
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            border-radius: 12px;
+            background: white;
+            border-radius: 10px;
             font-weight: 800;
-            color: #333;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            color: var(--text-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid #ddd;
         }
 
         #status-message {
-            background: rgba(255,255,255,0.8);
-            padding: 5px 15px;
+            background: var(--btn-brown);
+            color: white;
+            padding: 5px 20px;
             border-radius: 20px;
-            color: #4b0082;
             font-weight: bold;
-            font-size: 0.9em;
+            font-size: 0.95em;
             text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         /* === 5. GAME BOARD CONTAINER === */
         #game-board-container {
-            flex: 1; /* ขยายเต็มพื้นที่ว่าง */
+            flex: 1;
             width: 100%;
             display: flex;
             justify-content: center;
-            align-items: center; /* จัดกระดานให้อยู่กึ่งกลางจอ */
-            background-color: var(--board-bg);
-            border-radius: 16px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+            align-items: center;
+            background-color: var(--board-container);
+            border-radius: 12px;
             padding: 10px;
             overflow: hidden;
+            margin-bottom: 10px;
         }
 
-        /* === 6. THE BOARD (Fixed Size Logic) === */
+        /* === 6. THE BOARD (THINNER BORDER & NO SHADOW) === */
         #game-board {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             grid-template-rows: repeat(8, 1fr);
             gap: 2px;
             
-            /* --- สูตรคำนวณขนาดกระดาน --- */
-            /* ให้กว้างที่สุดเท่าที่จะทำได้ (95vw) แต่ไม่เกิน 55vh เพื่อเหลือที่ให้ UI */
-            /* และใช้ aspect-ratio บังคับเป็นจัตุรัส */
-            width: min(95vw, 60vh);
-            height: min(95vw, 60vh); /* Fallback for old browsers */
+            width: min(90vw, 55vh);
+            height: min(90vw, 55vh);
             aspect-ratio: 1 / 1;
-            /* ------------------------- */
 
-            background-color: #1a5c3a;
-            border-radius: 8px;
-            padding: 2px; /* Border padding */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background-color: #1b5e20; /* พื้นตารางสีเขียวเข้ม */
+            
+            /* --- UPDATED: ขอบบางลง + ไม่มีเงา --- */
+            border: 6px solid var(--wood-border); 
+            border-radius: 4px; 
+            box-shadow: none; /* เอาเงาออก */
+            /* ---------------------------------- */
         }
 
         .cell {
-            background-color: #3cb371; /* สีพื้นฐาน */
-            background-image: linear-gradient(135deg, #3cb371 0%, #2e8b57 100%);
+            background-color: #4caf50; /* สีเขียวพื้นฐาน */
             position: relative;
             cursor: pointer;
-            /* เพื่อให้ Cell ยืดเต็ม Grid Area */
             width: 100%;
             height: 100%;
         }
+        
+        /* ลายตารางแบบเรียบ */
+        .cell:nth-child(odd) { background-color: #43a047; } 
 
-        /* จุดบอกใบ้ (Hint) */
         .cell.hint::after {
             content: '';
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 20%; height: 20%;
-            background: rgba(255,255,255,0.4);
+            width: 25%; height: 25%;
+            background: rgba(0,0,0,0.2); /* จุดดำจางๆ แบบกระดานจริง */
             border-radius: 50%;
         }
 
         /* === 7. DISCS === */
         .disc {
-            width: 80%;
-            height: 80%;
+            width: 85%;
+            height: 85%;
             border-radius: 50%;
             position: absolute;
-            top: 10%; left: 10%;
-            box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+            top: 7.5%; left: 7.5%;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.3); /* เงาเบี้ยบางๆ */
             transition: transform 0.3s;
-            backface-visibility: hidden; /* ช่วยเรื่อง Animation */
+            backface-visibility: hidden;
         }
         
-        .disc.black { background: radial-gradient(circle at 30% 30%, #444, #000); }
-        .disc.white { background: radial-gradient(circle at 30% 30%, #fff, #ddd); }
+        .disc.black { background: #111; }
+        .disc.white { background: #fff; }
 
         .disc.flipped {
             animation: flipAnim 0.4s forwards;
@@ -204,7 +257,7 @@
 
         @keyframes flipAnim {
             0% { transform: scale(1) rotateY(0deg); }
-            50% { transform: scale(1.2) rotateY(90deg); }
+            50% { transform: scale(1.1) rotateY(90deg); }
             100% { transform: scale(1) rotateY(180deg); }
         }
 
@@ -212,7 +265,7 @@
         #question-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.8);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -227,7 +280,7 @@
             width: 100%;
             max-width: 320px;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .quiz-correct { border: 3px solid #4caf50; background: #e8f5e9 !important; }
@@ -240,12 +293,13 @@
         }
         .option-btn {
             flex: 1;
-            padding: 12px;
-            background: #6c5ce7;
+            padding: 15px;
+            background: var(--header-bg);
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 1.1em;
+            font-weight: bold;
         }
 
     </style>
@@ -254,16 +308,18 @@
 <body>
     <div id="app-container">
         <header>
-            <h1>✨ Word Reversi ✨</h1>
+            <h1>Word Reversi</h1>
+            <button id="back-home-btn" class="hidden" onclick="returnToMenu()">กลับหน้าหลัก</button>
         </header>
 
         <main id="main-menu">
-            <h2 style="text-align:center; color:#4b0082;">🎮 Select Mode</h2>
             <button class="menu-btn" onclick="startGame(true, true)">🧠 vs Robot (Quiz)</button>
             <button class="menu-btn" onclick="startGame(false, true)">🧑‍🤝‍🧑 2-Player (Quiz)</button>
-            <hr style="border-top:1px solid #ccc; width:80%; margin:0 auto;">
-            <button class="menu-btn" onclick="startGame(true, false)">🤖 vs Robot (Classic)</button>
-            <button class="menu-btn" onclick="startGame(false, false)">🧑‍🤝‍🧑 2-Player (Classic)</button>
+            
+            <hr>
+
+            <button class="menu-btn btn-classic" onclick="startGame(true, false)">🤖 vs Robot (Classic)</button>
+            <button class="menu-btn btn-classic" onclick="startGame(false, false)">🧑‍🤝‍🧑 2-Player (Classic)</button>
         </main>
 
         <main id="game-screen" class="hidden">
@@ -271,6 +327,7 @@
                 <span id="score-black">⚫ 2</span>
                 <span id="score-white">⚪ 2</span>
             </div>
+            
             <div id="status-message">Ready</div>
 
             <div id="game-board-container">
@@ -279,8 +336,8 @@
 
             <div id="question-overlay" class="hidden">
                 <div id="question-box">
-                    <h3 style="color:#6c5ce7; margin-bottom:15px;">Vocabulary</h3>
-                    <p id="question-text" style="font-size:1.1em; margin-bottom:20px; color:#333;"></p>
+                    <h3 style="color:#2e7d32; margin-bottom:15px; font-size:1.3em;">Vocabulary</h3>
+                    <p id="question-text" style="font-size:1.1em; margin-bottom:20px; color:#333; font-weight:500;"></p>
                     <div id="options-container"></div>
                 </div>
             </div>
@@ -337,7 +394,12 @@
             { question: "Synonym for 'Start'?", options: { A: "End", B: "Begin" }, correct: "B" },
             { question: "'Run' means...", options: { A: "Move fast", B: "Sleep" }, correct: "A" },
             { question: "Opposite of 'Hot'?", options: { A: "Cold", B: "Warm" }, correct: "A" },
-            { question: "Synonym for 'Quick'?", options: { A: "Slow", B: "Fast" }, correct: "B" }
+            { question: "Synonym for 'Quick'?", options: { A: "Slow", B: "Fast" }, correct: "B" },
+            { question: "Opposite of 'Day'?", options: { A: "Night", B: "Noon" }, correct: "A" },
+            { question: "Opposite of 'Rich'?", options: { A: "Poor", B: "Wealthy" }, correct: "A" },
+            { question: "Synonym for 'Happy'?", options: { A: "Sad", B: "Joyful" }, correct: "B" },
+            { question: "Opposite of 'Up'?", options: { A: "Down", B: "Left" }, correct: "A" },
+            { question: "Does a dog bark?", options: { A: "Yes", B: "No" }, correct: "A" }
         ];
         let currentQuestion = null;
 
@@ -352,7 +414,8 @@
             qText: document.getElementById('question-text'),
             opts: document.getElementById('options-container'),
             scoreB: document.getElementById('score-black'),
-            scoreW: document.getElementById('score-white')
+            scoreW: document.getElementById('score-white'),
+            backBtn: document.getElementById('back-home-btn')
         };
 
         const DIRECTIONS = [
@@ -369,6 +432,7 @@
             
             els.menu.classList.add('hidden');
             els.game.classList.remove('hidden');
+            els.backBtn.classList.remove('hidden'); // Show Back Button
             
             if(isQuizMode) availableQuizIndices = Array.from({length: vocabularyList.length}, (_, i) => i);
             initBoard();
@@ -377,6 +441,7 @@
         function returnToMenu() {
             els.menu.classList.remove('hidden');
             els.game.classList.add('hidden');
+            els.backBtn.classList.add('hidden'); // Hide Back Button in Menu
         }
 
         function initBoard() {
@@ -393,7 +458,6 @@
                     els.board.appendChild(cell);
                 }
             }
-            // Init discs
             board[3][3] = 2; board[3][4] = 1;
             board[4][3] = 1; board[4][4] = 2;
             
@@ -403,19 +467,17 @@
         }
 
         function getFlips(r, c, player) {
-            if (board[r][c] !== 0) return []; // ช่องต้องว่าง
+            if (board[r][c] !== 0) return [];
             const opponent = player === 1 ? 2 : 1;
             const flips = [];
 
             for (const d of DIRECTIONS) {
                 let nr = r + d.r, nc = c + d.c;
                 const path = [];
-                // เดินหน้าไปเรื่อยๆ ถ้าเจอศัตรู
                 while (nr >= 0 && nr < BOARD_SIZE && nc >= 0 && nc < BOARD_SIZE && board[nr][nc] === opponent) {
                     path.push({r: nr, c: nc});
                     nr += d.r; nc += d.c;
                 }
-                // ถ้าจบด้วยพวกเดียวกัน และมีศัตรูคั่นกลาง
                 if (path.length > 0 && nr >= 0 && nr < BOARD_SIZE && nc >= 0 && nc < BOARD_SIZE && board[nr][nc] === player) {
                     flips.push(...path);
                 }
@@ -464,19 +526,17 @@
         }
 
         function updateStatus() {
-            const pName = currentPlayer === 1 ? '⚫ Black' : '⚪ White';
+            const pName = currentPlayer === 1 ? 'Black' : 'White';
             const moves = getAllMoves(currentPlayer);
 
             if (moves.length === 0) {
                 const oppMoves = getAllMoves(currentPlayer === 1 ? 2 : 1);
                 if (oppMoves.length === 0) {
-                    // Game Over
                     const b = parseInt(els.scoreB.innerText.split(' ')[1]);
                     const w = parseInt(els.scoreW.innerText.split(' ')[1]);
                     const msg = b > w ? 'Black Wins!' : w > b ? 'White Wins!' : 'Draw!';
-                    els.status.innerHTML = `🏆 ${msg} <button onclick="returnToMenu()">Menu</button>`;
+                    els.status.innerHTML = `🏆 ${msg}`;
                 } else {
-                    // Pass Turn
                     els.status.innerText = `🚫 ${pName} Pass!`;
                     setTimeout(() => {
                         currentPlayer = currentPlayer === 1 ? 2 : 1;
@@ -501,7 +561,6 @@
             const r = parseInt(e.currentTarget.dataset.r);
             const c = parseInt(e.currentTarget.dataset.c);
 
-            // ตรวจสอบความถูกต้อง *ก่อน* ทำอย่างอื่น
             if (!isValid(r, c, currentPlayer)) return;
 
             lastClickedCell = {r, c};
@@ -513,7 +572,6 @@
             }
         }
 
-        // === QUIZ ===
         function startQuiz() {
             if (availableQuizIndices.length === 0) availableQuizIndices = Array.from({length: vocabularyList.length}, (_, i) => i);
             const rand = Math.floor(Math.random() * availableQuizIndices.length);
@@ -551,7 +609,6 @@
             }, 800);
         }
 
-        // === MOVE EXECUTION ===
         function botMove() {
             const moves = getAllMoves(currentPlayer);
             if (moves.length > 0) {
@@ -566,15 +623,11 @@
             const {r, c} = lastClickedCell;
             const opponent = currentPlayer === 1 ? 2 : 1;
             
-            // --- KEY FIX: คำนวณ Flips ก่อนวางเบี้ย ---
-            // ถ้าวางเบี้ยก่อน (board[r][c] = p) ฟังก์ชัน getFlips จะเห็นช่องไม่ว่างและ return []
             const flips = shouldFlip ? getFlips(r, c, currentPlayer) : [];
             
-            // วางเบี้ย
             board[r][c] = currentPlayer;
             updateVisuals();
 
-            // Animation
             if (flips.length > 0) {
                 for (const f of flips) {
                     await new Promise(r => setTimeout(r, 200));
@@ -584,7 +637,6 @@
                     if (disc) {
                         disc.classList.add('flipped');
                         playSound('flip');
-                        // เปลี่ยนสีจริงหลังจาก Animation ครึ่งทาง
                         setTimeout(() => {
                             board[f.r][f.c] = currentPlayer;
                             disc.classList.remove('black', 'white');
@@ -592,9 +644,7 @@
                         }, 200);
                     }
                 }
-                // รอให้ Animation จบทั้งหมด
                 await new Promise(r => setTimeout(r, 300));
-                // Update Logic ครั้งสุดท้ายเพื่อความชัวร์
                 flips.forEach(f => board[f.r][f.c] = currentPlayer);
                 updateVisuals();
             }
