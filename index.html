@@ -5,19 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Word Reversi - Nature Theme</title>
+    <title>Word Reversi - Full Experience</title>
 
     <style>
-        /* === 1. RESET & GLOBAL STYLES (THEME UPDATE) === */
+        /* === 1. RESET & VARIABLES === */
         :root {
-            /* ธีมสีใหม่: เขียว ขาว น้ำตาล ดำ */
-            --bg-color: #f4f7f0;       /* พื้นหลังขาวอมเขียวอ่อนๆ */
-            --header-bg: #2e7d32;      /* เขียวธรรมชาติ */
-            --board-container: #e8f5e9;/* พื้นหลังรองกระดานสีเขียวจางๆ */
-            --wood-border: #5d4037;    /* สีน้ำตาลเข้ม (ขอบไม้) */
-            --btn-brown: #795548;      /* ปุ่มสีน้ำตาล */
-            --btn-green: #43a047;      /* ปุ่มสีเขียว */
-            --text-color: #1b1b1b;     /* สีดำ */
+            --bg-color: #f4f7f0;
+            --header-bg: #2e7d32;
+            --board-container: #e8f5e9;
+            --wood-border: #5d4037;
+            --btn-brown: #795548;
+            --btn-green: #43a047;
+            --text-color: #1b1b1b;
         }
 
         * {
@@ -48,120 +47,96 @@
             width: 100%;
             height: 100%;
             display: flex;
-            flex-direction: column;
+            flex-direction: column; /* เรียงแนวตั้ง: Header -> Board -> Footer */
             background: var(--bg-color);
+            /* เว้นขอบบนล่างตาม Safe Area */
+            padding-top: max(5px, env(safe-area-inset-top));
             padding-bottom: max(10px, env(safe-area-inset-bottom));
         }
 
-        /* === 2. HEADER & BACK BUTTON === */
+        /* === 2. HEADER === */
         header {
             flex-shrink: 0;
             width: 100%;
-            height: 60px;
+            padding: 10px 0;
             background: var(--header-bg);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            position: relative; /* เพื่อวางปุ่มกลับหน้าหลักแบบ Absolute */
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 20;
+            z-index: 10;
         }
 
         h1 {
             color: #fff;
-            font-size: 1.5em;
+            font-size: 1.4em;
             font-weight: 800;
             margin: 0;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
 
-        /* ปุ่มกลับหน้าหลัก (แยกออกมาวางขวาบน) */
-        #back-home-btn {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            
-            background-color: #fff;
-            color: var(--header-bg);
-            border: 2px solid #fff;
-            border-radius: 20px;
-            
-            padding: 6px 12px;
-            font-size: 0.85em;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: all 0.2s;
-        }
-        
-        #back-home-btn:active {
-            transform: translateY(-50%) scale(0.95);
-            background-color: #f1f1f1;
-        }
-
         .hidden { display: none !important; }
 
-        /* === 3. MENU (MOVED TO TOP) === */
+        /* === 3. MENU === */
         #main-menu {
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* ดันเนื้อหาขึ้นบน */
+            justify-content: flex-start;
             align-items: center;
             gap: 15px;
             width: 100%;
             max-width: 400px;
             margin: 0 auto;
-            padding: 30px 20px; /* เพิ่ม padding ด้านบน */
+            padding: 40px 20px;
         }
 
         .menu-btn {
             width: 100%;
-            padding: 15px;
-            /* เปลี่ยนปุ่มเป็นโทนเขียว-น้ำตาล */
+            padding: 16px;
             background: linear-gradient(135deg, var(--btn-green) 0%, #2e7d32 100%);
             border: none;
             border-radius: 12px;
             color: white;
             font-size: 1.1em;
             font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
             transition: transform 0.1s;
         }
         .menu-btn:active { transform: scale(0.98); }
         
-        /* เส้นคั่น */
-        hr {
-            border: 0;
-            border-top: 2px dashed #ccc;
-            width: 100%;
-            margin: 10px 0;
-        }
-        
-        /* ปุ่มโหมด Classic เป็นสีน้ำตาลเพื่อแยกความแตกต่าง */
         .btn-classic {
             background: linear-gradient(135deg, #8d6e63 0%, var(--wood-border) 100%);
         }
 
+        hr { border: 0; border-top: 2px dashed #ccc; width: 100%; margin: 10px 0; }
+
         /* === 4. GAME SCREEN LAYOUT === */
         #game-screen {
-            flex: 1;
+            flex: 1; /* กินพื้นที่ทั้งหมดที่เหลือ */
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            overflow: hidden;
             width: 100%;
-            align-items: center;
+            overflow: hidden;
+        }
+
+        /* ส่วนแสดงคะแนนและสถานะ */
+        #info-bar {
+            flex-shrink: 0;
             padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
         }
 
         #score-board {
             display: flex;
             justify-content: space-around;
             width: 100%;
-            max-width: 400px;
-            padding: 10px;
+            max-width: 350px;
+            padding: 8px;
             background: white;
             border-radius: 10px;
             font-weight: 800;
@@ -171,136 +146,160 @@
         }
 
         #status-message {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* ระยะห่างไอคอนกับตัวหนังสือ */
             background: var(--btn-brown);
             color: white;
-            padding: 5px 20px;
+            padding: 6px 20px;
             border-radius: 20px;
             font-weight: bold;
-            font-size: 0.95em;
-            text-align: center;
+            font-size: 1em;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* === 5. GAME BOARD CONTAINER === */
+        /* ไอคอนสถานะจิ๋ว */
+        .status-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .status-icon.black { background: radial-gradient(circle at 30% 30%, #444, #000); border: 1px solid #fff; }
+        .status-icon.white { background: radial-gradient(circle at 30% 30%, #fff, #ddd); }
+
+        /* === 5. GAME BOARD CONTAINER (MAXIMIZED) === */
         #game-board-container {
-            flex: 1;
+            flex-grow: 1; /* ขยายให้เต็มพื้นที่กลางจอ */
             width: 100%;
             display: flex;
             justify-content: center;
-            align-items: center;
-            background-color: var(--board-container);
-            border-radius: 12px;
-            padding: 10px;
+            align-items: center; /* จัดกึ่งกลางแนวตั้งและแนวนอน */
+            padding: 5px;
             overflow: hidden;
-            margin-bottom: 10px;
         }
 
-        /* === 6. THE BOARD (THINNER BORDER & NO SHADOW) === */
+        /* === 6. THE BOARD === */
         #game-board {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             grid-template-rows: repeat(8, 1fr);
             gap: 2px;
             
-            width: min(90vw, 55vh);
-            height: min(90vw, 55vh);
+            /* สูตรขยายเต็มจอ: ใช้ min ของด้านกว้างหรือด้านสูงที่มีอยู่ */
+            /* ลบพื้นที่ Header/Footer ออกประมาณ 160px */
+            width: min(96vw, calc(100dvh - 180px)); 
+            height: min(96vw, calc(100dvh - 180px));
             aspect-ratio: 1 / 1;
 
-            background-color: #1b5e20; /* พื้นตารางสีเขียวเข้ม */
-            
-            /* --- UPDATED: ขอบบางลง + ไม่มีเงา --- */
+            background-color: #1b5e20;
             border: 6px solid var(--wood-border); 
             border-radius: 4px; 
-            box-shadow: none; /* เอาเงาออก */
-            /* ---------------------------------- */
         }
 
         .cell {
-            background-color: #4caf50; /* สีเขียวพื้นฐาน */
+            background-color: #4caf50;
             position: relative;
             cursor: pointer;
-            width: 100%;
-            height: 100%;
         }
-        
-        /* ลายตารางแบบเรียบ */
         .cell:nth-child(odd) { background-color: #43a047; } 
 
         .cell.hint::after {
             content: '';
             position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 25%; height: 25%;
-            background: rgba(0,0,0,0.2); /* จุดดำจางๆ แบบกระดานจริง */
+            background: rgba(0,0,0,0.2);
             border-radius: 50%;
         }
 
         /* === 7. DISCS === */
         .disc {
-            width: 85%;
-            height: 85%;
+            width: 85%; height: 85%;
             border-radius: 50%;
-            position: absolute;
-            top: 7.5%; left: 7.5%;
-            box-shadow: 1px 1px 2px rgba(0,0,0,0.3); /* เงาเบี้ยบางๆ */
+            position: absolute; top: 7.5%; left: 7.5%;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
             transition: transform 0.3s;
             backface-visibility: hidden;
         }
-        
-        .disc.black { background: #111; }
-        .disc.white { background: #fff; }
-
-        .disc.flipped {
-            animation: flipAnim 0.4s forwards;
-        }
-
+        .disc.black { background: radial-gradient(circle at 30% 30%, #444, #111); }
+        .disc.white { background: radial-gradient(circle at 30% 30%, #fff, #ddd); }
+        .disc.flipped { animation: flipAnim 0.4s forwards; }
         @keyframes flipAnim {
             0% { transform: scale(1) rotateY(0deg); }
             50% { transform: scale(1.1) rotateY(90deg); }
             100% { transform: scale(1) rotateY(180deg); }
         }
 
-        /* === 8. QUIZ OVERLAY === */
-        #question-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
+        /* === 8. FOOTER (BACK BUTTON) === */
+        footer {
+            flex-shrink: 0;
+            width: 100%;
+            padding: 10px 20px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            z-index: 999;
-            padding: 20px;
-        }
-        
-        #question-box {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            width: 100%;
-            max-width: 320px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: transparent;
         }
 
-        .quiz-correct { border: 3px solid #4caf50; background: #e8f5e9 !important; }
-        .quiz-error { border: 3px solid #f44336; background: #ffebee !important; }
-
-        #options-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .option-btn {
-            flex: 1;
-            padding: 15px;
-            background: var(--header-bg);
+        #back-home-btn {
+            background-color: #ef5350; /* สีแดงอ่อน */
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-size: 1em;
             font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
         }
+        #back-home-btn:active { transform: scale(0.96); background-color: #d32f2f; }
+
+        /* === 9. MODALS (Quiz & Exit) === */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 100;
+            padding: 20px;
+            backdrop-filter: blur(2px);
+        }
+        
+        .modal-box {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 340px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* Quiz Styles */
+        .quiz-correct { border: 3px solid #4caf50; background: #e8f5e9 !important; }
+        .quiz-error { border: 3px solid #f44336; background: #ffebee !important; }
+        #options-container { display: flex; gap: 10px; margin-top: 20px; }
+        .option-btn { flex: 1; padding: 12px; background: var(--header-bg); color: white; border: none; border-radius: 8px; font-size: 1rem; }
+
+        /* Exit Report Styles */
+        .report-stats {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .stat-row { display: flex; justify-content: space-between; font-size: 1.1em; }
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-cancel { background: #9e9e9e; }
+        .btn-confirm { background: #ef5350; }
 
     </style>
 </head>
@@ -309,51 +308,81 @@
     <div id="app-container">
         <header>
             <h1>Word Reversi</h1>
-            <button id="back-home-btn" class="hidden" onclick="returnToMenu()">กลับหน้าหลัก</button>
         </header>
 
         <main id="main-menu">
             <button class="menu-btn" onclick="startGame(true, true)">🧠 vs Robot (Quiz)</button>
             <button class="menu-btn" onclick="startGame(false, true)">🧑‍🤝‍🧑 2-Player (Quiz)</button>
-            
             <hr>
-
             <button class="menu-btn btn-classic" onclick="startGame(true, false)">🤖 vs Robot (Classic)</button>
             <button class="menu-btn btn-classic" onclick="startGame(false, false)">🧑‍🤝‍🧑 2-Player (Classic)</button>
         </main>
 
         <main id="game-screen" class="hidden">
-            <div id="score-board">
-                <span id="score-black">⚫ 2</span>
-                <span id="score-white">⚪ 2</span>
+            <div id="info-bar">
+                <div id="score-board">
+                    <span id="score-black">⚫ 2</span>
+                    <span id="score-white">⚪ 2</span>
+                </div>
+                <div id="status-message">
+                    <span>Ready</span>
+                </div>
             </div>
-            
-            <div id="status-message">Ready</div>
 
             <div id="game-board-container">
                 <div id="game-board"></div>
             </div>
 
-            <div id="question-overlay" class="hidden">
-                <div id="question-box">
-                    <h3 style="color:#2e7d32; margin-bottom:15px; font-size:1.3em;">Vocabulary</h3>
-                    <p id="question-text" style="font-size:1.1em; margin-bottom:20px; color:#333; font-weight:500;"></p>
-                    <div id="options-container"></div>
+            <footer>
+                <button id="back-home-btn" onclick="showExitConfirmation()">🔙 กลับหน้าหลัก</button>
+            </footer>
+        </main>
+
+        <div id="question-overlay" class="modal-overlay hidden">
+            <div id="question-box" class="modal-box">
+                <h3 style="color:#2e7d32; margin-bottom:10px;">Vocabulary</h3>
+                <p id="question-text" style="font-size:1.1em; color:#333; margin:15px 0;"></p>
+                <div id="options-container"></div>
+            </div>
+        </div>
+
+        <div id="exit-modal" class="modal-overlay hidden">
+            <div class="modal-box">
+                <h3 style="color:#5d4037; margin-bottom:10px;">จบเกมเลยเหรอ?</h3>
+                <div class="report-stats">
+                    <div class="stat-row">
+                        <span>เดินหมากไป:</span>
+                        <span id="report-moves" style="font-weight:bold;">0</span>
+                    </div>
+                    <hr style="margin:5px 0; opacity:0.3;">
+                    <div class="stat-row">
+                        <span>⚫ Black:</span>
+                        <span id="report-black" style="font-weight:bold;">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>⚪ White:</span>
+                        <span id="report-white" style="font-weight:bold;">0</span>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="option-btn btn-cancel" onclick="cancelExit()">เล่นต่อ</button>
+                    <button class="option-btn btn-confirm" onclick="confirmExit()">ออกเกม</button>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
 
     <script>
         // === CONFIG ===
         const BOARD_SIZE = 8;
         let board = [];
-        let currentPlayer = 1; // 1=Black, 2=White
+        let currentPlayer = 1; 
         let lastClickedCell = null;
         let isRobotMode = false;
         let isQuizMode = true;
         let isProcessing = false;
         let availableQuizIndices = [];
+        let moveCount = 0; // เพิ่มตัวนับจำนวนการเดิน
 
         // === AUDIO ===
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -366,24 +395,16 @@
             const now = audioCtx.currentTime;
 
             if (type === 'correct') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, now);
-                osc.frequency.exponentialRampToValueAtTime(1000, now + 0.2);
-                gain.gain.setValueAtTime(0.1, now);
-                gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                osc.type = 'sine'; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(1000, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
                 osc.start(now); osc.stop(now + 0.3);
             } else if (type === 'error') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, now);
-                osc.frequency.linearRampToValueAtTime(100, now + 0.3);
-                gain.gain.setValueAtTime(0.1, now);
-                gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(100, now + 0.3);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
                 osc.start(now); osc.stop(now + 0.3);
             } else if (type === 'flip') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(800, now);
-                gain.gain.setValueAtTime(0.05, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                osc.type = 'square'; osc.frequency.setValueAtTime(800, now);
+                gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
                 osc.start(now); osc.stop(now + 0.05);
             }
         }
@@ -394,12 +415,7 @@
             { question: "Synonym for 'Start'?", options: { A: "End", B: "Begin" }, correct: "B" },
             { question: "'Run' means...", options: { A: "Move fast", B: "Sleep" }, correct: "A" },
             { question: "Opposite of 'Hot'?", options: { A: "Cold", B: "Warm" }, correct: "A" },
-            { question: "Synonym for 'Quick'?", options: { A: "Slow", B: "Fast" }, correct: "B" },
-            { question: "Opposite of 'Day'?", options: { A: "Night", B: "Noon" }, correct: "A" },
-            { question: "Opposite of 'Rich'?", options: { A: "Poor", B: "Wealthy" }, correct: "A" },
-            { question: "Synonym for 'Happy'?", options: { A: "Sad", B: "Joyful" }, correct: "B" },
-            { question: "Opposite of 'Up'?", options: { A: "Down", B: "Left" }, correct: "A" },
-            { question: "Does a dog bark?", options: { A: "Yes", B: "No" }, correct: "A" }
+            { question: "Synonym for 'Quick'?", options: { A: "Slow", B: "Fast" }, correct: "B" }
         ];
         let currentQuestion = null;
 
@@ -415,34 +431,49 @@
             opts: document.getElementById('options-container'),
             scoreB: document.getElementById('score-black'),
             scoreW: document.getElementById('score-white'),
-            backBtn: document.getElementById('back-home-btn')
+            exitModal: document.getElementById('exit-modal'),
+            repMoves: document.getElementById('report-moves'),
+            repBlack: document.getElementById('report-black'),
+            repWhite: document.getElementById('report-white')
         };
 
-        const DIRECTIONS = [
-            {r:-1,c:0}, {r:1,c:0}, {r:0,c:-1}, {r:0,c:1},
-            {r:-1,c:-1}, {r:-1,c:1}, {r:1,c:-1}, {r:1,c:1}
-        ];
+        const DIRECTIONS = [ {r:-1,c:0}, {r:1,c:0}, {r:0,c:-1}, {r:0,c:1}, {r:-1,c:-1}, {r:-1,c:1}, {r:1,c:-1}, {r:1,c:1} ];
 
         // === GAME LOGIC ===
         function startGame(robot, quiz) {
-            isRobotMode = robot;
-            isQuizMode = quiz;
-            isProcessing = false;
+            isRobotMode = robot; isQuizMode = quiz; isProcessing = false; moveCount = 0;
             if (audioCtx.state === 'suspended') audioCtx.resume();
             
             els.menu.classList.add('hidden');
             els.game.classList.remove('hidden');
-            els.backBtn.classList.remove('hidden'); // Show Back Button
             
             if(isQuizMode) availableQuizIndices = Array.from({length: vocabularyList.length}, (_, i) => i);
             initBoard();
         }
 
-        function returnToMenu() {
+        // --- EXIT LOGIC ---
+        function showExitConfirmation() {
+            // Get current scores
+            const b = els.scoreB.innerText.split(' ')[1];
+            const w = els.scoreW.innerText.split(' ')[1];
+            
+            els.repMoves.innerText = moveCount;
+            els.repBlack.innerText = b;
+            els.repWhite.innerText = w;
+            
+            els.exitModal.classList.remove('hidden');
+        }
+
+        function confirmExit() {
+            els.exitModal.classList.add('hidden');
             els.menu.classList.remove('hidden');
             els.game.classList.add('hidden');
-            els.backBtn.classList.add('hidden'); // Hide Back Button in Menu
         }
+
+        function cancelExit() {
+            els.exitModal.classList.add('hidden');
+        }
+        // ------------------
 
         function initBoard() {
             board = Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(0));
@@ -452,15 +483,12 @@
                 for(let c=0; c<BOARD_SIZE; c++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
-                    cell.dataset.r = r;
-                    cell.dataset.c = c;
+                    cell.dataset.r = r; cell.dataset.c = c;
                     cell.onclick = handleCellClick;
                     els.board.appendChild(cell);
                 }
             }
-            board[3][3] = 2; board[3][4] = 1;
-            board[4][3] = 1; board[4][4] = 2;
-            
+            board[3][3] = 2; board[3][4] = 1; board[4][3] = 1; board[4][4] = 2;
             currentPlayer = 1;
             updateVisuals();
             updateStatus();
@@ -470,23 +498,23 @@
             if (board[r][c] !== 0) return [];
             const opponent = player === 1 ? 2 : 1;
             const flips = [];
-
             for (const d of DIRECTIONS) {
                 let nr = r + d.r, nc = c + d.c;
                 const path = [];
                 while (nr >= 0 && nr < BOARD_SIZE && nc >= 0 && nc < BOARD_SIZE && board[nr][nc] === opponent) {
-                    path.push({r: nr, c: nc});
-                    nr += d.r; nc += d.c;
+                    path.push({r: nr, c: nc}); nr += d.r; nc += d.c;
                 }
-                if (path.length > 0 && nr >= 0 && nr < BOARD_SIZE && nc >= 0 && nc < BOARD_SIZE && board[nr][nc] === player) {
-                    flips.push(...path);
-                }
+                if (path.length > 0 && nr >= 0 && nr < BOARD_SIZE && nc >= 0 && nc < BOARD_SIZE && board[nr][nc] === player) flips.push(...path);
             }
             return flips;
         }
 
-        function isValid(r, c, player) {
-            return getFlips(r, c, player).length > 0;
+        function isValid(r, c, player) { return getFlips(r, c, player).length > 0; }
+
+        function getAllMoves(player) {
+            const moves = [];
+            for(let r=0; r<BOARD_SIZE; r++) for(let c=0; c<BOARD_SIZE; c++) if (getFlips(r, c, player).length > 0) moves.push({r, c});
+            return moves;
         }
 
         function updateVisuals() {
@@ -495,12 +523,9 @@
             const showHints = !isProcessing && !(isRobotMode && currentPlayer === 2);
 
             Array.from(els.board.children).forEach(cell => {
-                const r = parseInt(cell.dataset.r);
-                const c = parseInt(cell.dataset.c);
+                const r = parseInt(cell.dataset.r); const c = parseInt(cell.dataset.c);
                 const val = board[r][c];
-                
-                cell.className = 'cell';
-                cell.innerHTML = '';
+                cell.className = 'cell'; cell.innerHTML = '';
 
                 if (val !== 0) {
                     const disc = document.createElement('div');
@@ -511,23 +536,16 @@
                     cell.classList.add('hint');
                 }
             });
-            els.scoreB.innerText = `⚫ ${b}`;
-            els.scoreW.innerText = `⚪ ${w}`;
-        }
-
-        function getAllMoves(player) {
-            const moves = [];
-            for(let r=0; r<BOARD_SIZE; r++) {
-                for(let c=0; c<BOARD_SIZE; c++) {
-                    if (getFlips(r, c, player).length > 0) moves.push({r, c});
-                }
-            }
-            return moves;
+            els.scoreB.innerText = `⚫ ${b}`; els.scoreW.innerText = `⚪ ${w}`;
         }
 
         function updateStatus() {
-            const pName = currentPlayer === 1 ? 'Black' : 'White';
             const moves = getAllMoves(currentPlayer);
+            const pClass = currentPlayer === 1 ? 'black' : 'white';
+            const pText = currentPlayer === 1 ? "Black's Turn" : "White's Turn";
+
+            // Update Status with Icon
+            els.status.innerHTML = `<span class="status-icon ${pClass}"></span> <span>${pText}</span>`;
 
             if (moves.length === 0) {
                 const oppMoves = getAllMoves(currentPlayer === 1 ? 2 : 1);
@@ -536,26 +554,19 @@
                     const w = parseInt(els.scoreW.innerText.split(' ')[1]);
                     const msg = b > w ? 'Black Wins!' : w > b ? 'White Wins!' : 'Draw!';
                     els.status.innerHTML = `🏆 ${msg}`;
+                    showExitConfirmation(); // Auto show report on end
                 } else {
-                    els.status.innerText = `🚫 ${pName} Pass!`;
-                    setTimeout(() => {
-                        currentPlayer = currentPlayer === 1 ? 2 : 1;
-                        updateStatus();
-                    }, 1500);
+                    els.status.innerText = `🚫 Pass!`;
+                    setTimeout(() => { currentPlayer = currentPlayer === 1 ? 2 : 1; updateStatus(); }, 1500);
                 }
                 return;
             }
-
-            els.status.innerText = `${pName}'s Turn`;
             updateVisuals();
-
-            if (isRobotMode && currentPlayer === 2) {
-                setTimeout(botMove, 1000);
-            }
+            if (isRobotMode && currentPlayer === 2) setTimeout(botMove, 1000);
         }
 
         function handleCellClick(e) {
-            if (isProcessing || !els.overlay.classList.contains('hidden')) return;
+            if (isProcessing || !els.overlay.classList.contains('hidden') || !els.exitModal.classList.contains('hidden')) return;
             if (isRobotMode && currentPlayer === 2) return;
 
             const r = parseInt(e.currentTarget.dataset.r);
@@ -564,12 +575,7 @@
             if (!isValid(r, c, currentPlayer)) return;
 
             lastClickedCell = {r, c};
-
-            if (isQuizMode) {
-                startQuiz();
-            } else {
-                executeMove(true);
-            }
+            if (isQuizMode) startQuiz(); else executeMove(true);
         }
 
         function startQuiz() {
@@ -579,7 +585,7 @@
             availableQuizIndices.splice(rand, 1);
             
             currentQuestion = vocabularyList[idx];
-            els.qBox.className = '';
+            els.qBox.className = 'modal-box';
             els.qText.innerText = currentQuestion.question;
             els.opts.innerHTML = '';
             
@@ -595,13 +601,8 @@
 
         function handleAnswer(ans) {
             const correct = (ans === currentQuestion.correct);
-            if (correct) {
-                els.qBox.classList.add('quiz-correct');
-                playSound('correct');
-            } else {
-                els.qBox.classList.add('quiz-error');
-                playSound('error');
-            }
+            if (correct) { els.qBox.classList.add('quiz-correct'); playSound('correct'); }
+            else { els.qBox.classList.add('quiz-error'); playSound('error'); }
             
             setTimeout(() => {
                 els.overlay.classList.add('hidden');
@@ -622,13 +623,13 @@
             isProcessing = true;
             const {r, c} = lastClickedCell;
             const opponent = currentPlayer === 1 ? 2 : 1;
-            
             const flips = shouldFlip ? getFlips(r, c, currentPlayer) : [];
             
             board[r][c] = currentPlayer;
             updateVisuals();
 
             if (flips.length > 0) {
+                moveCount++; // Increment move count only on success
                 for (const f of flips) {
                     await new Promise(r => setTimeout(r, 200));
                     const idx = f.r * BOARD_SIZE + f.c;
